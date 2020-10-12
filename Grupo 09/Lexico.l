@@ -63,7 +63,7 @@ ID_T				{LETRA}.({LETRA}|{DIGITO})*
 %%
 {CONST_INT}			{if (atoi (yytext) < -32768 || atoi (yytext) > 32767){tokenInvalido(yytext);}else{yylval.strVal = strdup(yytext); return CONST_INT;} }
 {CONST_FLOAT}		{if (atof (yytext) < -3.4E+38 || atof (yytext) > 3.4E+38){tokenInvalido(yytext);}else{yylval.strVal = strdup(yytext); return CONST_FLOAT;} }
-{CONST_STRING}		{if(strlen(yytext)<=30){yylval.strVal = strdup(yytext); return CONST_STRING;}
+{CONST_STRING}		{if(strlen(yytext)<=32){yylval.strVal = strdup(yytext); return CONST_STRING;}
 						else{printf("\nCADENA MAYOR A 30 CARACTERES EN LA LINEA %d\n",yylineno); errorLexico();}}
 {ELSE_T}			{return ELSE_T;}
 {IF_T}				{return IF_T;}
