@@ -24,8 +24,8 @@ Gramática
 
    10 declaracion: DIM_T OP_MENOR dupla_asig OP_MAYOR
 
-   11 dupla_asig: ID_T OP_MAYOR AS_T OP_MENOR tipo
-   12           | ID_T SEPARADOR_T dupla_asig SEPARADOR_T tipo
+   11 dupla_asig: ID_T SEPARADOR_T dupla_asig SEPARADOR_T tipo
+   12           | ID_T OP_MAYOR AS_T OP_MENOR tipo
 
    13 tipo: FLOAT_T
    14     | INTEGER_T
@@ -95,8 +95,8 @@ IF_T (263) 19 20
 OP_DISTINTO (264) 31
 OP_COMP (265) 32
 OP_MAYORIGUAL (266) 33
-OP_MAYOR (267) 10 11 34
-OP_MENOR (268) 10 11 36
+OP_MAYOR (267) 10 12 34
+OP_MENOR (268) 10 12 36
 OP_MENORIGUAL (269) 35
 LLAVE_C (270) 16 21
 LLAVE_A (271) 16 21
@@ -109,12 +109,12 @@ OP_MENOS (277) 38
 OP_MUL (278) 40
 WHILE_T (279) 16
 SEP_LINEA (280) 23 24 25 26
-SEPARADOR_T (281) 12 49
+SEPARADOR_T (281) 11 49
 FLOAT_T (282) 13
 INTEGER_T (283) 14
 STRING_T (284) 15
 DIM_T (285) 10
-AS_T (286) 11
+AS_T (286) 12
 TOKEN_PUT (287) 25
 GET_T (288) 26
 CONST_T (289) 24
@@ -137,7 +137,7 @@ sentencia (42)
 declaracion (43)
     en la izquierda: 10, en la derecha: 9
 dupla_asig (44)
-    en la izquierda: 11 12, en la derecha: 10 12
+    en la izquierda: 11 12, en la derecha: 10 11
 tipo (45)
     en la izquierda: 13 14 15, en la derecha: 11 12
 iteracion (46)
@@ -579,8 +579,8 @@ estado 40
 
 estado 41
 
-   11 dupla_asig: ID_T . OP_MAYOR AS_T OP_MENOR tipo
-   12           | ID_T . SEPARADOR_T dupla_asig SEPARADOR_T tipo
+   11 dupla_asig: ID_T . SEPARADOR_T dupla_asig SEPARADOR_T tipo
+   12           | ID_T . OP_MAYOR AS_T OP_MENOR tipo
 
     OP_MAYOR     desplazar e ir al estado 64
     SEPARADOR_T  desplazar e ir al estado 65
@@ -842,14 +842,14 @@ estado 63
 
 estado 64
 
-   11 dupla_asig: ID_T OP_MAYOR . AS_T OP_MENOR tipo
+   12 dupla_asig: ID_T OP_MAYOR . AS_T OP_MENOR tipo
 
     AS_T  desplazar e ir al estado 82
 
 
 estado 65
 
-   12 dupla_asig: ID_T SEPARADOR_T . dupla_asig SEPARADOR_T tipo
+   11 dupla_asig: ID_T SEPARADOR_T . dupla_asig SEPARADOR_T tipo
 
     ID_T  desplazar e ir al estado 41
 
@@ -1034,14 +1034,14 @@ estado 81
 
 estado 82
 
-   11 dupla_asig: ID_T OP_MAYOR AS_T . OP_MENOR tipo
+   12 dupla_asig: ID_T OP_MAYOR AS_T . OP_MENOR tipo
 
     OP_MENOR  desplazar e ir al estado 90
 
 
 estado 83
 
-   12 dupla_asig: ID_T SEPARADOR_T dupla_asig . SEPARADOR_T tipo
+   11 dupla_asig: ID_T SEPARADOR_T dupla_asig . SEPARADOR_T tipo
 
     SEPARADOR_T  desplazar e ir al estado 91
 
@@ -1153,7 +1153,7 @@ estado 89
 
 estado 90
 
-   11 dupla_asig: ID_T OP_MAYOR AS_T OP_MENOR . tipo
+   12 dupla_asig: ID_T OP_MAYOR AS_T OP_MENOR . tipo
 
     FLOAT_T    desplazar e ir al estado 96
     INTEGER_T  desplazar e ir al estado 97
@@ -1164,7 +1164,7 @@ estado 90
 
 estado 91
 
-   12 dupla_asig: ID_T SEPARADOR_T dupla_asig SEPARADOR_T . tipo
+   11 dupla_asig: ID_T SEPARADOR_T dupla_asig SEPARADOR_T . tipo
 
     FLOAT_T    desplazar e ir al estado 96
     INTEGER_T  desplazar e ir al estado 97
@@ -1229,13 +1229,13 @@ estado 98
 
 estado 99
 
-   11 dupla_asig: ID_T OP_MAYOR AS_T OP_MENOR tipo .
+   12 dupla_asig: ID_T OP_MAYOR AS_T OP_MENOR tipo .
 
-    $default  reduce usando la regla 11 (dupla_asig)
+    $default  reduce usando la regla 12 (dupla_asig)
 
 
 estado 100
 
-   12 dupla_asig: ID_T SEPARADOR_T dupla_asig SEPARADOR_T tipo .
+   11 dupla_asig: ID_T SEPARADOR_T dupla_asig SEPARADOR_T tipo .
 
-    $default  reduce usando la regla 12 (dupla_asig)
+    $default  reduce usando la regla 11 (dupla_asig)
