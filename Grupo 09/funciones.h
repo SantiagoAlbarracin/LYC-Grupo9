@@ -14,6 +14,7 @@ typedef struct tupla{
 	char* valor;
 	char* tipo;
 	char constante[3];
+	char longitud[30];
 	struct tupla* siguiente;
 
 }tuplaTabla;
@@ -54,13 +55,13 @@ int vaciar_lista(tabla* l)
     	return 0;
     }
 
-   	fprintf(pf,"%s","LEXEMA\t\t\t\t\t\tVALOR\t\t\t\t\t\tCONSTANTE\n");
+   	fprintf(pf,"%s","LEXEMA\t\t\t\t\t\tVALOR\t\t\t\t\t\tCONSTANTE\t\t\t\t\t\tLONGITUD\n");
 
     while(*l)
     {
         viejo=*l;
         *l=viejo->siguiente;
-        fprintf(pf,"%s\t\t\t\t%s\t\t\t\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante);
+        fprintf(pf,"%s\t\t\t\t%s\t\t\t\t\t\t%s\t\t\t\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante, viejo->longitud);
 
         free(viejo);
     }
@@ -96,8 +97,14 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante){
 				printf("Error, no hay memoria\n.");
 				return -1;
 			}
-			strcpy(nuevo->valor, lexemaE);
+			if(constante == ES_CONSTANTE){
+				strcpy(nuevo->constante,"SI");
+			}else{
+				strcpy(nuevo->constante,"NO");
 
+			}
+			strcpy(nuevo->valor, lexemaE);
+			itoa(strlen(lexemaE), nuevo->longitud, 10);
 	}else{/* SI NO ES UN STRING VERIFICO SI ES CON VALOR O SIN VALOR. PARA AMBOS CASOS ASIGNO EL NOMBRE AL LEXEMA Y RESERVO LA MEMORIA*/
 		nuevo->lexema = (char*) malloc(sizeof(char) * strlen(lexemaE) + 2);
 
@@ -107,11 +114,15 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante){
 		}
 
 		strcpy(nuevo->lexema, "_");
+		strcpy(nuevo->longitud, "-");
 
 		strcat(nuevo->lexema, lexemaE);
 
 		nuevo->tipo = NULL;
 		nuevo->valor = NULL;
+		if(constante != ES_CONSTANTE)
+				strcpy(nuevo->constante,"NO");
+
 
 		/*SI ES CON VALOR GUARDO EL VALOR DEL LEXEMA EN LA TUPLA*/
 		if(valor == CON_VALOR){
@@ -131,7 +142,6 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante){
 
 	}
 	/*LO INSERTO EN LA LISTA DE MANERA ORDENADA*/
-	strcpy(nuevo->constante,"NO");
 
 	resultado = enlistar_en_orden(tablaSimbolos, nuevo);
 
