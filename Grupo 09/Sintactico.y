@@ -67,6 +67,7 @@ extern FILE* yyin;
 %token CONST_T  	
 %token TOKEN_AND	
 %token TOKEN_OR		
+%token TOKEN_NOT
 %token MAX_TOKEN	
 %token SALTO_LINEA
 
@@ -153,10 +154,12 @@ leer:   GET_T ID_T  SEP_LINEA{printf("ES LEER: GET_T ID_T \n"); insertar($2, CON
 condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
             |condicion TOKEN_AND comparacion {printf("CONDICION: CONDICION TOKEN_AND COMPARACION \n");}
             |condicion TOKEN_OR comparacion {printf("CONDICION: CONDICION TOKEN_OR COMPARACION \n");}
+            |TOKEN_NOT comparacion {printf("CONDICION: TOKEN_NOT COMPARACION \n");}
             ;
 
 
 comparacion: expresion comparador termino {printf("EXPRESION COMPARADOR TERMINO \n");}
+			|PARENT_A	expresion comparador termino	PARENT_C  {printf("PARENT_A EXPRESION COMPARADOR TERMINO PARENT_C\n");}
       ;
 
 

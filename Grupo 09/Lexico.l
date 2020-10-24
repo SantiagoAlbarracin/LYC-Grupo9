@@ -56,6 +56,7 @@ GET_T				"get"|"GET"
 CONST_T  			"const"|"CONST"
 TOKEN_AND			"and"|"AND"
 TOKEN_OR			"or"|"OR"
+TOKEN_NOT			"not"|"NOT"
 MAX_TOKEN			"máximo"|"maximo"
 COMENTARIO			"*""-"({LETRA}|{DIGITO}|!|"*"|"/"|"("|")"|"-")*"-""*"
 ID_T				{LETRA}.({LETRA}|{DIGITO})*
@@ -95,6 +96,7 @@ ID_T				{LETRA}.({LETRA}|{DIGITO})*
 {CONST_T}			{return CONST_T;}
 {TOKEN_AND}			{return TOKEN_AND;}
 {TOKEN_OR}			{return TOKEN_OR;}
+{TOKEN_NOT}			{return TOKEN_NOT;}
 {MAX_TOKEN}			{return MAX_TOKEN;}
 {COMENTARIO}		printf("COMENTARIO EN LA LINEA %d\n",yylineno);
 {ID_T}				{yylval.strVal = strdup(yytext); return ID_T;}
