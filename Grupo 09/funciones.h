@@ -25,7 +25,7 @@ typedef  tuplaTabla* tabla;
 
 
 
-int insertar(char* , int ,tabla*  , int );
+int insertar(char* , int ,tabla*  , int ,  char*);
 
 int enlistar_en_orden(tabla* ,tuplaTabla* );
 
@@ -55,13 +55,13 @@ int vaciar_lista(tabla* l)
     	return 0;
     }
 
-   	fprintf(pf,"%s","LEXEMA\t\t\t\t\t\tVALOR\t\t\t\t\t\tCONSTANTE\t\t\t\t\t\tLONGITUD\n");
+   	fprintf(pf,"%s","LEXEMA\t\t\t\tVALOR\t\t\t\tCONSTANTE\t\t\tLONGITUD\t\t\tTIPO\n");
 
     while(*l)
     {
         viejo=*l;
         *l=viejo->siguiente;
-        fprintf(pf,"%s\t\t\t\t%s\t\t\t\t\t\t%s\t\t\t\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante, viejo->longitud);
+        fprintf(pf,"%s\t\t\t\t%s\t\t\t\t%s\t\t\t%s\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante, viejo->longitud, viejo->tipo);
 
         free(viejo);
     }
@@ -71,7 +71,7 @@ int vaciar_lista(tabla* l)
 }
 
 
-int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante){
+int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char* tipo2){
 
 	tuplaTabla* nuevo;
 	int resultado = 0;
@@ -118,7 +118,7 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante){
 
 		strcat(nuevo->lexema, lexemaE);
 
-		nuevo->tipo = NULL;
+		
 		nuevo->valor = NULL;
 		if(constante != ES_CONSTANTE)
 				strcpy(nuevo->constante,"NO");
@@ -141,6 +141,14 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante){
 		}
 
 	}
+
+	nuevo->tipo = (char*) malloc(sizeof(char) * strlen(tipo2) + 2);
+		if(!(nuevo->tipo)){
+			printf("Error, no hay memoria\n.");
+			return -1;
+		}
+		strcpy(nuevo->tipo,tipo2);
+
 	/*LO INSERTO EN LA LISTA DE MANERA ORDENADA*/
 
 	resultado = enlistar_en_orden(tablaSimbolos, nuevo);

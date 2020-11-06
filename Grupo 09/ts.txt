@@ -1,16 +1,17 @@
-LEXEMA						VALOR						CONSTANTE						LONGITUD
-_0				0						NO						-
-_02.5				02.5						NO						-
-_1				1						NO						-
-_2				2						NO						-
-_85				85						NO						-
-_9				9						NO						-
-_Ingrese un entero a actual: 				Ingrese un entero a actual: 						NO						28
-_La suma es: 				La suma es: 						NO						12
-_Prueba.txt LyC Tema 3!				Prueba.txt LyC Tema 3!						NO						22
-_actual				actual						NO						-
-_actual es > 2 y != 0				actual es > 2 y != 0						NO						20
-_contador				contador						NO						-
-_no es mayor que 2				no es mayor que 2						NO						17
-_nombre				nombre						SI						-
-_suma				suma						NO						-
+LEXEMA				VALOR				CONSTANTE			LONGITUD			TIPO
+_0				0				NO			-			-
+_02.5				02.5				NO			-			-
+_1				1				NO			-			-
+_2				2				NO			-			-
+_85				85				NO			-			-
+_9				9				NO			-			-
+_Ingrese un entero a actual: 				Ingrese un entero a actual: 				NO			28			-
+_La suma es: 				La suma es: 				NO			12			-
+_Prueba.txt LyC Tema 3!				Prueba.txt LyC Tema 3!				NO			22			-
+_actual				actual				NO			-			Float
+_actual es > 2 y != 0				actual es > 2 y != 0				NO			20			-
+_contador				contador				NO			-			Integer
+_no es mayor que 2				no es mayor que 2				NO			17			-
+_nombre				nombre				SI			-			-
+_promedio				promedio				NO			-			Float
+_suma				suma				NO			-			Float

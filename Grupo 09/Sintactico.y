@@ -1,13 +1,16 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <conio.h>
 #include "y.tab.h"
 #include "funciones.h"
-
+#include "Cola.h"
+#include "Pila.h"
 
 tabla tablaSimbolos;
-
+t_cola cola;
+t_pila pila;
 
 int yylex();
 void yyerror(const char *s);
@@ -57,9 +60,9 @@ extern FILE* yyin;
 %token WHILE_T		
 %token SEP_LINEA	
 %token SEPARADOR_T	
-%token FLOAT_T		
-%token INTEGER_T	
-%token STRING_T
+%token <strVal> FLOAT_T		
+%token <strVal> INTEGER_T	
+%token <strVal> STRING_T
 %token DIM_T		
 %token AS_T			
 %token TOKEN_PUT	
@@ -100,18 +103,30 @@ sentencia:  iteracion {printf("ES UNA SENTENCIA: ITERACION \n");}
             ;
 
 
-declaracion:  DIM_T OP_MENOR dupla_asig OP_MAYOR  {printf("ES UNA LISTA DECLARACION\n");}
+declaracion:  DIM_T OP_MENOR dupla_asig OP_MAYOR  	{	printf("ES UNA LISTA DECLARACION\n");  
+														char id[20];
+ 														char tipoVar[20];
+ 														while(!pila_vacia(&pila) || !cola_vacia(&cola) ){
+															desapilar(&pila, id);
+															desacolar(&cola, tipoVar);
+														if(strcmp(tipoVar, "String") == 0)
+															insertar(id, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE, tipoVar);
+														else
+															insertar(id, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, tipoVar);
+
+ 														}
+ 													}
               ;   
 
 
-dupla_asig:  ID_T SEPARADOR_T dupla_asig  SEPARADOR_T tipo   {printf("ES UNA DUPLA ASIG RECURSIVA\n");}
-            |ID_T OP_MAYOR AS_T OP_MENOR tipo   {printf("ES UNA DUPLA ASIG\n");}
+dupla_asig:  ID_T SEPARADOR_T dupla_asig  SEPARADOR_T tipo   {  printf("ES UNA DUPLA ASIG RECURSIVA\n");  apilar(&pila, $1);}
+            |ID_T OP_MAYOR AS_T OP_MENOR tipo   {  printf("ES UNA DUPLA ASIG\n"); apilar(&pila, $1);  }
             ;
 
 
-tipo: FLOAT_T {printf("ES UN TIPO: FLOAT \n");}
-      |INTEGER_T {printf("ES UN TIPO: INTEGER \n");}
-      |STRING_T  {printf("ES UN TIPO: STRING \n");}
+tipo: 	FLOAT_T {acolar(&cola, "Float"); printf("ES UN TIPO: FLOAT \n");}
+      |INTEGER_T { acolar(&cola, "Integer"); printf("ES UN TIPO: INTEGER \n");}
+      |STRING_T  { acolar(&cola, "String"); printf("ES UN TIPO: STRING \n");}
       ;
 
 
@@ -138,8 +153,11 @@ argumento_sel:  LLAVE_A programa LLAVE_C  {printf("ES ARGUMENTOS_SEL: PROGRAMA \
 
 
 
-asignacion: ID_T OP_AS expresion SEP_LINEA {printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE);}
-            |CONST_T  ID_T OP_AS expresion SEP_LINEA {printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); insertar($2, CON_VALOR, &tablaSimbolos,ES_CONSTANTE);}
+asignacion: ID_T OP_AS expresion SEP_LINEA {printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); 
+											insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, "-");}
+
+            |CONST_T  ID_T OP_AS expresion SEP_LINEA {printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
+            											insertar($2, CON_VALOR, &tablaSimbolos,ES_CONSTANTE, "-");}
             ;
 
 
@@ -147,7 +165,7 @@ imprimir:   TOKEN_PUT elemento  SEP_LINEA {printf("ES IMPRIMIR: TOKEN_PUT CONST_
             ;
 
 
-leer:   GET_T ID_T  SEP_LINEA{printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE);}
+leer:   GET_T ID_T  SEP_LINEA{printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");}
         ;
 
 
@@ -186,11 +204,11 @@ termino:    termino OP_MUL elemento {printf("ES TERMINO: TERMINO OP_MUL ELEMENTO
 
 
 elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION PARENT_C \n");}
-      |ID_T {printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE); }
+      |ID_T {printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
       |MAX_TOKEN PARENT_A argumentos PARENT_C {printf("ES ELEMENTO: MAX_TOKEN PARENT_A ARGUMENTOS PARENT_C \n");}
-      |CONST_INT {insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE); printf("ES ELEMENTO: CONST INT \n");}
-      |CONST_FLOAT {insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE); printf("ES ELEMENTO: CONST FLOAT \n");}
-      |CONST_STRING {insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE); printf("ES ELEMENTO: CONST STRING \n");}
+      |CONST_INT {insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); printf("ES ELEMENTO: CONST INT \n");}
+      |CONST_FLOAT {insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); printf("ES ELEMENTO: CONST FLOAT \n");}
+      |CONST_STRING {insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-"); printf("ES ELEMENTO: CONST STRING \n");}
 
       ;
 
@@ -211,11 +229,14 @@ int main(int argc,char *argv[])
   else
   {
     crearTabla(&tablaSimbolos);
+    crear_pila(&pila);
+    crear_cola(&cola);
 	  yyparse();
   }
   fclose(yyin);
   vaciar_lista(&tablaSimbolos);
   
+
   return 0;
 }
 
