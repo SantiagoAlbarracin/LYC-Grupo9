@@ -42,27 +42,21 @@ void vaciar_cola(t_cola* c)
 
 int acolar(t_cola* c,char* d)
 {
-    printf("Entre a acolar,  %s\n",d);
     t_nodo* nuevo=(t_nodo*)malloc(sizeof(t_nodo));
-    printf("Hice malloc\n");
     if(!nuevo){
         printf("No se pudo reservar memoria\n");
         return 0;
     }   
-    printf("Reserve memoria\n");
     strcpy(nuevo->dato,d);
-    printf("Asigne a nuevo el dato\n");
     nuevo->sig=NULL;
     if(!c->primero)
     {
         c->primero=nuevo;
         c->ultimo=nuevo;
-        printf("Cola estaba vacia e inserte el nuevo\n");
         return 1;
     }
         c->ultimo->sig=nuevo;
         c->ultimo=nuevo;
-        printf("Inserte nuevo en la cola\n");
     return 1;
 }
 

@@ -14,6 +14,10 @@ t_lista polacaLista;
 t_cola cola;
 t_pila pila;
 t_pila posiciones;
+t_pila rellenar;
+
+char simboloComparacion[4];
+int posicionPolaca = 0;
 
 
 int yylex();
@@ -138,33 +142,41 @@ iteracion:    WHILE_T PARENT_A condicion PARENT_C LLAVE_A programa LLAVE_C {prin
               ;
 
 
-seleccion:  seleccion_con_else {printf("ES SELECCION:  SELECCION CON ELSE\n");}
-            |seleccion_sin_else  {printf("ES SELECCION:  SELECCION SIN ELSE\n");}
+seleccion:  seleccion_con_else { 
+
+								printf("ES SELECCION:  SELECCION CON ELSE\n");}
+
+
+            |seleccion_sin_else  { printf("ES SELECCION:  SELECCION SIN ELSE\n");}
             ;
 
 
-seleccion_con_else:  IF_T PARENT_A condicion PARENT_C  argumento_sel ELSE_T argumento_sel {printf("ES SELECCION_CON_ELSE: IF ARGUMENTO_SEL ELSE ARGUMENTO_SEL \n");}
+seleccion_con_else:  IF_T PARENT_A condicion PARENT_C  argumento_sel { apilarEntero(&posiciones, posicionPolaca); } ELSE_T argumento_sel  { 
+												rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), desapilarEntero(&posiciones)); 				
+												printf("ES SELECCION_CON_ELSE: IF ARGUMENTO_SEL ELSE ARGUMENTO_SEL \n");}
                 ;
 
-seleccion_sin_else: IF_T PARENT_A condicion PARENT_C  argumento_sel {printf("ES SELECCION_SIN_ELSE: IF ARGUMENTO_SEL \n");}
+seleccion_sin_else: IF_T PARENT_A condicion PARENT_C  argumento_sel {
+												rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), desapilarEntero(&posiciones)); 
+												printf("ES SELECCION_SIN_ELSE: IF ARGUMENTO_SEL \n");}
                     ;
 
 
-argumento_sel:  LLAVE_A programa LLAVE_C  {printf("ES ARGUMENTOS_SEL: PROGRAMA \n");}
+argumento_sel:  LLAVE_A programa LLAVE_C  {  printf("ES ARGUMENTOS_SEL: PROGRAMA \n");}
                 |sentencia  {printf("ES ARGUMENTOS_SEL: SENTENCIA \n");}
                 ;
 
 
 
 
-asignacion: ID_T OP_AS expresion SEP_LINEA { 	enlistar(&polacaLista, $1);
-											 	enlistar(&polacaLista, ":");
+asignacion: ID_T OP_AS expresion SEP_LINEA { 	enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;
+											 	enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 												printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); 
 												insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, "-");}
 
 
-            |CONST_T  ID_T OP_AS expresion SEP_LINEA {  enlistar(&polacaLista, $2);
-            											enlistar(&polacaLista, ":");
+            |CONST_T  ID_T OP_AS expresion SEP_LINEA {  enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++;
+            											enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
             											printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
             											insertar($2, CON_VALOR, &tablaSimbolos,ES_CONSTANTE, "-");}
             ;
@@ -185,32 +197,39 @@ condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
             ;
 
 
-comparacion: expresion comparador termino {printf("EXPRESION COMPARADOR TERMINO \n");}
+comparacion: expresion comparador termino { enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+											enlistar(&polacaLista, simboloComparacion, posicionPolaca); posicionPolaca++;
+											enlistar(&polacaLista, "  ", posicionPolaca );  apilarEntero(&rellenar, posicionPolaca); posicionPolaca++;
+											printf("EXPRESION COMPARADOR TERMINO \n");}
+
+
+
+
 			|PARENT_A	expresion comparador termino	PARENT_C  {printf("PARENT_A EXPRESION COMPARADOR TERMINO PARENT_C\n");}
       ;
 
 
-comparador:  OP_DISTINTO {printf(" ES COMPARADOR: OP_DISTINTO \n");}
-       |OP_COMP {printf("ES COMPARADOR: OP_COMP \n");}
-       |OP_MAYORIGUAL {printf("ES COMPARADOR: OP_MAYORIGUAL \n");}
-       |OP_MAYOR {printf("ES COMPARADOR: OP_MAYOR \n");}
-       |OP_MENORIGUAL {printf("ES COMPARADOR: OP_MENORIGUAL \n");}
-       |OP_MENOR {printf("ES COMPARADOR: OP_MENOR \n");}
+comparador:  OP_DISTINTO { strcpy(simboloComparacion, "BNE"); printf(" ES COMPARADOR: OP_DISTINTO \n");}
+       |OP_COMP { strcpy(simboloComparacion, "BEQ");  printf("ES COMPARADOR: OP_COMP \n");}
+       |OP_MAYORIGUAL { strcpy(simboloComparacion, "BLE");  printf("ES COMPARADOR: OP_MAYORIGUAL \n");}
+       |OP_MAYOR { strcpy(simboloComparacion, "BLT"); printf("ES COMPARADOR: OP_MAYOR \n");}
+       |OP_MENORIGUAL { strcpy(simboloComparacion, "BGE"); printf("ES COMPARADOR: OP_MENORIGUAL \n");}
+       |OP_MENOR { strcpy(simboloComparacion, "BGT"); printf("ES COMPARADOR: OP_MENOR \n");}
        ;
 
 
-expresion:  expresion OP_SUM termino {  enlistar(&polacaLista, "+"); printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");}
+expresion:  expresion OP_SUM termino {  enlistar(&polacaLista, "+", posicionPolaca); posicionPolaca++; printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");}
 
-      |expresion OP_MENOS termino {  enlistar(&polacaLista, "-");printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");}
+      |expresion OP_MENOS termino {  enlistar(&polacaLista, "-", posicionPolaca); posicionPolaca++; printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");}
 
       |termino {printf("ES EXPRESION: TERMINO \n");}
 
       ;
 
 
-termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*"); printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");}
+termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*", posicionPolaca); posicionPolaca++; printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");}
 
-      |termino OP_DIVISION elemento {  enlistar(&polacaLista, "/"); printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
+      |termino OP_DIVISION elemento {  enlistar(&polacaLista, "/", posicionPolaca); posicionPolaca++; printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
 
       |elemento {printf("ES TERMINO: ELEMENTO \n");}
       ;
@@ -221,17 +240,17 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
       |MAX_TOKEN PARENT_A argumentos PARENT_C {printf("ES ELEMENTO: MAX_TOKEN PARENT_A ARGUMENTOS PARENT_C \n");}
 
 
-      |ID_T {  enlistar(&polacaLista, $1);  printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+      |ID_T { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;  printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
 
 
-      |CONST_INT { enlistar(&polacaLista, $1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST INT \n");}
+      |CONST_INT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST INT \n");}
 
 
-      |CONST_FLOAT { enlistar(&polacaLista, $1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST FLOAT \n");}
+      |CONST_FLOAT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST FLOAT \n");}
 
 
 
-      |CONST_STRING { insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST STRING \n");}
+      |CONST_STRING {  insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");   printf("ES ELEMENTO: CONST STRING \n");}
 
       ;
 
@@ -255,13 +274,14 @@ int main(int argc,char *argv[])
     crear_lista(&polacaLista);
     crear_pila(&pila);
     crear_pila(&posiciones);
+    crear_pila(&rellenar);
     crear_cola(&cola);
 
 	  yyparse();
   }
   fclose(yyin);
   vaciar_lista_TS(&tablaSimbolos);
-  vaciar_lista_INTERMEDIO(&polacaLista);
+  vaciar_lista_INTERMEDIO(&polacaLista, posicionPolaca);
   
 
   return 0;

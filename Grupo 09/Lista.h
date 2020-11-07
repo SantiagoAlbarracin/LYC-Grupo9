@@ -6,6 +6,7 @@
 typedef struct l_nodo
 {
     struct l_nodo* sig;
+    int nroPolaca;
     char elemento[32];
 
 }l_nodo;
@@ -14,10 +15,10 @@ typedef l_nodo* t_lista;
 
 void crear_lista(t_lista*);
 int lista_vacia(t_lista* );
-int enlistar(t_lista* ,char* );
+int enlistar(t_lista* ,char*, int );
 int desenlistar(t_lista *,char *);
 int lista_llena(t_lista* );
-int vaciar_lista_INTERMEDIO(t_lista* );
+int vaciar_lista_INTERMEDIO(t_lista*, int );
 
 
 
@@ -32,14 +33,26 @@ int lista_vacia(t_lista* l)
     return !*l;
 }
 
-int enlistar(t_lista* l,char* d)
+int enlistar(t_lista* l,char* d, int posicion)
 {
-    l_nodo* nuevo=(l_nodo*)malloc(sizeof(l_nodo));
-    if(!nuevo)
+    t_lista* nodoaux = l;
+    l_nodo* nuevo = (l_nodo*)malloc(sizeof(l_nodo));
+    if(!nuevo){
+        printf("NO RESERVO MEMORIA\n");
         return 0;
-    nuevo->sig=*l;
+    }
+
+    nuevo->sig=NULL;
     strcpy(nuevo->elemento,d);
-    *l=nuevo;
+    nuevo->nroPolaca = posicion;
+    if(!*l){
+        *l = nuevo;
+    }else{
+        while((*nodoaux)->sig != NULL){
+            nodoaux = &(*nodoaux)->sig;
+        }
+        (*nodoaux)->sig = nuevo;
+    }
     return 1;
 }
 
@@ -61,19 +74,26 @@ int lista_llena(t_lista* l)
     return !aux;
 }
 
-int vaciar_lista_INTERMEDIO(t_lista* l)
+int vaciar_lista_INTERMEDIO(t_lista* l, int posiciones)
 {
     l_nodo* aux;
+    int i = 0;
     FILE* pf = fopen("intermedia.txt","w+");
     if(!pf){
         printf("No se pudo abrir el archivo;\n");
         return 0;
     }
+    while(i <= posiciones ){
+        fprintf(pf, "%d\t", i);
+        i++;
+    }
+    fprintf(pf, "\n");
+
     while(*l)
     {
         aux=*l;
         *l=aux->sig;
-        fprintf(pf,"%s   ", aux->elemento);
+        fprintf(pf,"%s\t", aux->elemento);
         free(aux);
     }
     fclose(pf);

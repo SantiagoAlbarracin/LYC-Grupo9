@@ -7,6 +7,7 @@ typedef struct f_nodo
 {
     struct f_nodo* ant;
     char dato[20];
+    int nro;
 }r_nodo;
 
 typedef r_nodo* t_pila;
@@ -28,21 +29,32 @@ void crear_pila(t_pila* p)
 
 int apilar(t_pila* p,char* d)
 {
-	printf("Entre a apilar, %s\n", d);
 
     r_nodo* nuevo=(r_nodo*)malloc(sizeof(r_nodo));
-    printf("Hice malloc\n");
 
     if(!nuevo){
     	printf("No se pudo reservar memoria\n");
         return 0;
     }
-    printf("Reserve memoria\n");
     strcpy(nuevo->dato,d);
-    printf("Asigne a nuevo el dato\n");
     nuevo->ant=*p;
     *p=nuevo;
-    printf("Inserte en pila\n");
+
+    return 1;
+}
+
+int apilarEntero(t_pila* p,int d)
+{
+
+    r_nodo* nuevo=(r_nodo*)malloc(sizeof(r_nodo));
+
+    if(!nuevo){
+        printf("No se pudo reservar memoria\n");
+        return 0;
+    }
+    nuevo->nro = d;
+    nuevo->ant=*p;
+    *p=nuevo;
 
     return 1;
 }
@@ -58,6 +70,20 @@ int desapilar(t_pila* p,char* d)
     *p=viejo->ant;
     free(viejo);
     return 1;
+}
+
+int desapilarEntero(t_pila* p)
+{
+    r_nodo* viejo;
+    int retorno = 0;
+    if(!*p)
+        return 0;
+    viejo=(r_nodo*)malloc(sizeof(r_nodo));
+    viejo=*p;
+    retorno = viejo->nro;
+    *p=viejo->ant;
+    free(viejo);
+    return retorno;
 }
 
 int pila_vacia(t_pila* p)
