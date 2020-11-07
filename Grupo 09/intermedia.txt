@@ -1,0 +1,1 @@
+nombre   actual   0   actual   2   actual   suma   :   contador   +   1   contador   9   contador   :   suma   +   nombre   02.5   :   contador   0   :   nombre   85   

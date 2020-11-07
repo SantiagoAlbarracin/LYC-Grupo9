@@ -7,10 +7,14 @@
 #include "funciones.h"
 #include "Cola.h"
 #include "Pila.h"
+#include "Lista.h"
 
 tabla tablaSimbolos;
+t_lista polacaLista;
 t_cola cola;
 t_pila pila;
+t_pila posiciones;
+
 
 int yylex();
 void yyerror(const char *s);
@@ -153,10 +157,15 @@ argumento_sel:  LLAVE_A programa LLAVE_C  {printf("ES ARGUMENTOS_SEL: PROGRAMA \
 
 
 
-asignacion: ID_T OP_AS expresion SEP_LINEA {printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); 
-											insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, "-");}
+asignacion: ID_T OP_AS expresion SEP_LINEA { 	enlistar(&polacaLista, $1);
+											 	enlistar(&polacaLista, ":");
+												printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); 
+												insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, "-");}
 
-            |CONST_T  ID_T OP_AS expresion SEP_LINEA {printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
+
+            |CONST_T  ID_T OP_AS expresion SEP_LINEA {  enlistar(&polacaLista, $2);
+            											enlistar(&polacaLista, ":");
+            											printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
             											insertar($2, CON_VALOR, &tablaSimbolos,ES_CONSTANTE, "-");}
             ;
 
@@ -165,7 +174,7 @@ imprimir:   TOKEN_PUT elemento  SEP_LINEA {printf("ES IMPRIMIR: TOKEN_PUT CONST_
             ;
 
 
-leer:   GET_T ID_T  SEP_LINEA{printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");}
+leer:   GET_T ID_T  SEP_LINEA{ printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
         ;
 
 
@@ -190,25 +199,39 @@ comparador:  OP_DISTINTO {printf(" ES COMPARADOR: OP_DISTINTO \n");}
        ;
 
 
-expresion:  expresion OP_SUM termino {printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");}
-      |expresion OP_MENOS termino {printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");}
+expresion:  expresion OP_SUM termino {  enlistar(&polacaLista, "+"); printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");}
+
+      |expresion OP_MENOS termino {  enlistar(&polacaLista, "-");printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");}
+
       |termino {printf("ES EXPRESION: TERMINO \n");}
 
       ;
 
 
-termino:    termino OP_MUL elemento {printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");}
-      |termino OP_DIVISION elemento {printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
+termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*"); printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");}
+
+      |termino OP_DIVISION elemento {  enlistar(&polacaLista, "/"); printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
+
       |elemento {printf("ES TERMINO: ELEMENTO \n");}
       ;
 
 
 elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION PARENT_C \n");}
-      |ID_T {printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+      
       |MAX_TOKEN PARENT_A argumentos PARENT_C {printf("ES ELEMENTO: MAX_TOKEN PARENT_A ARGUMENTOS PARENT_C \n");}
-      |CONST_INT {insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); printf("ES ELEMENTO: CONST INT \n");}
-      |CONST_FLOAT {insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); printf("ES ELEMENTO: CONST FLOAT \n");}
-      |CONST_STRING {insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-"); printf("ES ELEMENTO: CONST STRING \n");}
+
+
+      |ID_T {  enlistar(&polacaLista, $1);  printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+
+
+      |CONST_INT { enlistar(&polacaLista, $1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST INT \n");}
+
+
+      |CONST_FLOAT { enlistar(&polacaLista, $1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST FLOAT \n");}
+
+
+
+      |CONST_STRING { insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST STRING \n");}
 
       ;
 
@@ -229,12 +252,16 @@ int main(int argc,char *argv[])
   else
   {
     crearTabla(&tablaSimbolos);
+    crear_lista(&polacaLista);
     crear_pila(&pila);
+    crear_pila(&posiciones);
     crear_cola(&cola);
+
 	  yyparse();
   }
   fclose(yyin);
-  vaciar_lista(&tablaSimbolos);
+  vaciar_lista_TS(&tablaSimbolos);
+  vaciar_lista_INTERMEDIO(&polacaLista);
   
 
   return 0;

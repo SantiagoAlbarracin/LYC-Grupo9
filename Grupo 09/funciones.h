@@ -29,7 +29,7 @@ int insertar(char* , int ,tabla*  , int ,  char*);
 
 int enlistar_en_orden(tabla* ,tuplaTabla* );
 
-int vaciar_lista(tabla* l);
+int vaciar_lista_TS(tabla* l);
 
 void crearTabla(tabla* lista);
 
@@ -46,7 +46,7 @@ void crearTabla(tabla* lista){
 
 
 
-int vaciar_lista(tabla* l)
+int vaciar_lista_TS(tabla* l)
 {
     tuplaTabla* viejo;
     FILE* pf = fopen("ts.txt","w+");

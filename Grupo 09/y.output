@@ -74,8 +74,8 @@ Gramática
    44        | elemento
 
    45 elemento: PARENT_A expresion PARENT_C
-   46         | ID_T
-   47         | MAX_TOKEN PARENT_A argumentos PARENT_C
+   46         | MAX_TOKEN PARENT_A argumentos PARENT_C
+   47         | ID_T
    48         | CONST_INT
    49         | CONST_FLOAT
    50         | CONST_STRING
@@ -91,7 +91,7 @@ error (256)
 CONST_INT (258) 48
 CONST_FLOAT (259) 49
 CONST_STRING (260) 50
-ID_T (261) 11 12 23 24 26 46
+ID_T (261) 11 12 23 24 26 47
 ELSE_T (262) 19
 IF_T (263) 19 20
 OP_DISTINTO (264) 33
@@ -102,8 +102,8 @@ OP_MENOR (268) 10 12 38
 OP_MENORIGUAL (269) 37
 LLAVE_C (270) 16 21
 LLAVE_A (271) 16 21
-PARENT_C (272) 16 19 20 32 45 47
-PARENT_A (273) 16 19 20 32 45 47
+PARENT_C (272) 16 19 20 32 45 46
+PARENT_A (273) 16 19 20 32 45 46
 OP_DIVISION (274) 43
 OP_AS (275) 23 24
 OP_SUM (276) 39
@@ -123,7 +123,7 @@ CONST_T (289) 24
 TOKEN_AND (290) 28
 TOKEN_OR (291) 29
 TOKEN_NOT (292) 30
-MAX_TOKEN (293) 47
+MAX_TOKEN (293) 46
 SALTO_LINEA (294)
 
 
@@ -173,7 +173,7 @@ termino (59)
 elemento (60)
     en la izquierda: 45 46 47 48 49 50, en la derecha: 25 42 43 44
 argumentos (61)
-    en la izquierda: 51 52, en la derecha: 47 51
+    en la izquierda: 51 52, en la derecha: 46 51
 
 
 estado 0
@@ -441,9 +441,9 @@ estado 25
 
 estado 26
 
-   46 elemento: ID_T .
+   47 elemento: ID_T .
 
-    $default  reduce usando la regla 46 (elemento)
+    $default  reduce usando la regla 47 (elemento)
 
 
 estado 27
@@ -464,7 +464,7 @@ estado 27
 
 estado 28
 
-   47 elemento: MAX_TOKEN . PARENT_A argumentos PARENT_C
+   46 elemento: MAX_TOKEN . PARENT_A argumentos PARENT_C
 
     PARENT_A  desplazar e ir al estado 46
 
@@ -645,7 +645,7 @@ estado 45
 
 estado 46
 
-   47 elemento: MAX_TOKEN PARENT_A . argumentos PARENT_C
+   46 elemento: MAX_TOKEN PARENT_A . argumentos PARENT_C
 
     CONST_INT     desplazar e ir al estado 23
     CONST_FLOAT   desplazar e ir al estado 24
@@ -950,7 +950,7 @@ estado 72
 
 estado 73
 
-   47 elemento: MAX_TOKEN PARENT_A argumentos . PARENT_C
+   46 elemento: MAX_TOKEN PARENT_A argumentos . PARENT_C
    51 argumentos: argumentos . SEPARADOR_T expresion
 
     PARENT_C     desplazar e ir al estado 89
@@ -1129,9 +1129,9 @@ estado 88
 
 estado 89
 
-   47 elemento: MAX_TOKEN PARENT_A argumentos PARENT_C .
+   46 elemento: MAX_TOKEN PARENT_A argumentos PARENT_C .
 
-    $default  reduce usando la regla 47 (elemento)
+    $default  reduce usando la regla 46 (elemento)
 
 
 estado 90
