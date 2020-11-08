@@ -291,6 +291,9 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 													finmax=1;
       											}  else{
       											    enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+      											    pilaTam = 0;
+      											    finmax = -1;
+      											    banderaMaxAnidado = 0;
       											}										
       										}
 
