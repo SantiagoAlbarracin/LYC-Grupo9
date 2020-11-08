@@ -5,6 +5,7 @@ _1				1				NO			-			-
 _100				100				NO			-			-
 _2				2				NO			-			-
 _3				3				NO			-			-
+_4				4				NO			-			-
 _5				5				NO			-			-
 _7				7				NO			-			-
 _85				85				NO			-			-
@@ -12,8 +13,11 @@ _9				9				NO			-			-
 _Ingrese un entero a actual: 				Ingrese un entero a actual: 				NO			28			-
 _La suma es: 				La suma es: 				NO			12			-
 _Prueba.txt LyC Tema 3!				Prueba.txt LyC Tema 3!				NO			22			-
+_a				a				NO			-			-
 _actual				actual				NO			-			Float
 _actual es > 2 y != 0				actual es > 2 y != 0				NO			20			-
+_b				b				NO			-			-
+_c				c				NO			-			-
 _contador				contador				NO			-			Integer
 _no es mayor que 2				no es mayor que 2				NO			17			-
 _nombre				nombre				SI			-			-

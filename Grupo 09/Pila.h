@@ -19,6 +19,7 @@ int apilar(t_pila*,char*);
 int desapilar(t_pila*,char*);
 int pila_vacia(t_pila*);
 void vaciar_pila(t_pila*);
+int apilarTODO(t_pila*, char*, int);
 //////////////////////////
 
 
@@ -43,11 +44,29 @@ int apilar(t_pila* p,char* d)
     return 1;
 }
 
+
+int apilarTODO(t_pila* p, char* d, int nro){
+
+ r_nodo* nuevo=(r_nodo*)malloc(sizeof(r_nodo));
+
+    if(!nuevo){
+        printf("No se pudo reservar memoria\n");
+        return 0;
+    }
+    strcpy(nuevo->dato,d);
+    nuevo->nro = nro;
+    nuevo->ant=*p;
+    *p=nuevo;
+
+    return 1;
+
+
+}
+
 int apilarEntero(t_pila* p,int d)
 {
 
     r_nodo* nuevo=(r_nodo*)malloc(sizeof(r_nodo));
-    printf("SOY APILAR ENTERO Y VOY A APILAR UN  %d", d);
     if(!nuevo){
         printf("No se pudo reservar memoria\n");
         return 0;

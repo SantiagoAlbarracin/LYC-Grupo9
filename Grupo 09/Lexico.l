@@ -59,7 +59,7 @@ TOKEN_OR			"or"|"OR"
 TOKEN_NOT			"not"|"NOT"
 MAX_TOKEN			"máximo"|"maximo"
 COMENTARIO			"*""-"({LETRA}|{DIGITO}|!|"*"|"/"|"("|")"|"-")*"-""*"
-ID_T				{LETRA}.({LETRA}|{DIGITO})*
+ID_T				{LETRA}({LETRA}|{DIGITO})*
 
 %%
 {CONST_INT}			{if (atoi (yytext) < -32768 || atoi (yytext) > 32767){tokenInvalido(yytext);}else{yylval.strVal = strdup(yytext); return CONST_INT;} }

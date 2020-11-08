@@ -105,11 +105,25 @@ void rellenarPolaca(t_lista *l, int posicion, int valor){
         aux = &(*aux)->sig;
     }
     if(!*aux){
-        printf("LISTA VACIAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!!\n");
+        printf("LISTA VACIA!\n");
     }
     if(((*aux)->nroPolaca-posicion) == 0){
         itoa(valor, cadena, 10);
-        printf("VOY A RELLENAR EN RELLENARPOLACA CON:   %d\n", valor);
         strcpy((*aux)->elemento, cadena );
+    }
+}
+
+
+void rellenarPolacaChar(t_lista *l, int posicion, char* valor){
+
+    t_lista* aux = l;
+    while(*aux && (((*aux)->nroPolaca-posicion) != 0)  ){
+        aux = &(*aux)->sig;
+    }
+    if(!*aux){
+        printf("LISTA VACIA!\n");
+    }
+    if(((*aux)->nroPolaca-posicion) == 0){
+        strcpy((*aux)->elemento, valor );
     }
 }

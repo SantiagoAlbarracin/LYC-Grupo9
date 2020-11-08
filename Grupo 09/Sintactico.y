@@ -13,8 +13,12 @@ tabla tablaSimbolos;
 t_lista polacaLista;
 t_cola cola;
 t_pila pila;
-t_pila posiciones;
+t_pila condicionesOR;
+t_pila simbolosASS;
 t_pila rellenar;
+
+t_pila maximoPila;
+
 
 char simboloComparacion[4];
 int posicionPolaca = 0;
@@ -22,11 +26,17 @@ int posicionPolaca = 0;
 int condicionCompuesta = 0;
 int posicionComparacion = 0;
 int banderaOR = 0;
+int siguientePolaca = 0;
+int pilaTam = 0;
+int banderaMaxAnidado = 0;
+
+int finmax = -1;
 
 
 int yylex();
-void yyerror(const char *s);
+void yyerror(const char *);
 void verificaCondicion();
+void invertirSimbolo(char* );
 
 extern char* yytext;
 extern int yylineno;
@@ -205,15 +215,10 @@ leer:   GET_T ID_T  SEP_LINEA{	enlistar(&polacaLista, $2, posicionPolaca); posic
 
 
 condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
-            |condicion TOKEN_AND { condicionCompuesta++; } comparacion 
-            															{ 
-            																printf("CONDICION: CONDICION TOKEN_AND COMPARACION \n");}
+            |condicion TOKEN_AND { condicionCompuesta++; } comparacion 	{ printf("CONDICION: CONDICION TOKEN_AND COMPARACION \n"); }
 
 
-            |condicion TOKEN_OR {  condicionCompuesta++; banderaOR++; } comparacion 
-            					
-            					{ 
-            						printf("CONDICION: CONDICION TOKEN_OR COMPARACION \n"); }
+            |condicion TOKEN_OR {  condicionCompuesta++; } comparacion { banderaOR++; siguientePolaca = posicionPolaca+1; printf("CONDICION: CONDICION TOKEN_OR COMPARACION \n"); }
 
             |TOKEN_NOT comparacion {  printf("CONDICION: TOKEN_NOT COMPARACION \n");}
             ;
@@ -221,8 +226,10 @@ condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
 
 
 comparacion: expresion comparador termino { enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
-											enlistar(&polacaLista, simboloComparacion, posicionPolaca); posicionPolaca++;
-											enlistar(&polacaLista, "  ", posicionPolaca );  apilarEntero(&rellenar, posicionPolaca); posicionPolaca++;
+											enlistar(&polacaLista, simboloComparacion, posicionPolaca); apilarEntero(&condicionesOR, posicionPolaca);
+											apilar(&simbolosASS, simboloComparacion); posicionPolaca++;
+											printf("VOY A ENLISTAR DPS DE ENLISTAR CMP   %s\n", simboloComparacion); 
+											enlistar(&polacaLista, "  ", posicionPolaca );  apilarEntero(&rellenar, posicionPolaca);  posicionPolaca++;
 											printf("EXPRESION COMPARADOR TERMINO \n");
 											}
 
@@ -253,7 +260,8 @@ expresion:  expresion OP_SUM termino {  enlistar(&polacaLista, "+", posicionPola
 
 termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*", posicionPolaca); posicionPolaca++; printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");}
 
-      |termino OP_DIVISION elemento {  enlistar(&polacaLista, "/", posicionPolaca); posicionPolaca++; printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
+      |termino OP_DIVISION elemento {  enlistar(&polacaLista, "/", posicionPolaca); posicionPolaca++; 
+      									printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
 
       |elemento {printf("ES TERMINO: ELEMENTO \n");}
       ;
@@ -261,10 +269,34 @@ termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*", posicionPolac
 
 elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION PARENT_C \n");}
       
-      |MAX_TOKEN PARENT_A argumentos PARENT_C {printf("ES ELEMENTO: MAX_TOKEN PARENT_A ARGUMENTOS PARENT_C \n");}
+      |MAX_TOKEN { pilaTam++; banderaMaxAnidado++; } PARENT_A argumentos PARENT_C { char cadenaMax[5];
+												char max[8];
+												char maxAux[8];
+												strcpy(max, "@max");
+												strcat(max,itoa(pilaTam,cadenaMax,10));
+      											printf("ES ELEMENTO: MAX_TOKEN PARENT_A ARGUMENTOS PARENT_C \n");
+      											if(pilaTam>1){
+      												desapilar(&maximoPila, maxAux);
+      												desapilar(&maximoPila, max);
+      												pilaTam--;
+													enlistar(&polacaLista, maxAux, posicionPolaca); posicionPolaca++; 
+													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, maxAux, posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++; 
+													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+													apilar(&maximoPila, max);
+													//banderaMaxAnidado--;
+      											}  else{
+      											    enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+      											}										
+      										}
 
 
-      |ID_T { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;  printf("ES ELEMENTO: ID_T  %s\n",$1); insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+      |ID_T { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;  printf("ES ELEMENTO: ID_T  %s\n",$1); 
+      				insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
 
 
       |CONST_INT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST INT \n");}
@@ -279,8 +311,40 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 
       ;
 
-argumentos: argumentos SEPARADOR_T expresion {printf("ES ARGUMENTO: ARGUMENTOS SEPARADOR_T EXPRESION \n");}
-        	|expresion {printf("ES ARGUMENTO: EXPRESION \n");}
+argumentos: argumentos SEPARADOR_T expresion { char cadenaMax[5];
+												char max[8];
+												strcpy(max, "@max");
+												strcat(max,itoa(pilaTam,cadenaMax,10));
+												if(banderaMaxAnidado < 2){
+													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++; 
+													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++; 
+													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++; 
+													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+												}else{
+													if(finmax == -1){
+														enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++; 
+														enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+												}
+
+				}
+											printf("ES ARGUMENTO: ARGUMENTOS SEPARADOR_T EXPRESION \n");}
+
+
+
+        	|expresion {  char cadenaMax[5];
+							char max[8];
+							strcpy(max, "@max");
+							strcat(max,itoa(pilaTam,cadenaMax,10));
+							apilar(&maximoPila, max);
+        					enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+        					 enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++; 
+        				printf("ES ARGUMENTO: EXPRESION \n"); }
         ;
 %%
 
@@ -298,8 +362,9 @@ int main(int argc,char *argv[])
     crearTabla(&tablaSimbolos);
     crear_lista(&polacaLista);
     crear_pila(&pila);
-    crear_pila(&posiciones);
+    crear_pila(&simbolosASS);
     crear_pila(&rellenar);
+    crear_pila(&maximoPila);
     crear_cola(&cola);
 
 	  yyparse();
@@ -316,9 +381,26 @@ int main(int argc,char *argv[])
 void verificaCondicion(){
 	if(condicionCompuesta){
 		condicionCompuesta = 0;
-		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
-		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
+		if(banderaOR){
+				char aux1[5];
+				char aux2[5];
+				desapilar(&simbolosASS, aux1);
+				desapilar(&simbolosASS, aux2);
 
+				printf("ENTRE A BANDERAOR\n");
+				invertirSimbolo(aux1);
+				invertirSimbolo(aux2);
+				
+				banderaOR = 0;
+				rellenarPolacaChar(&polacaLista, desapilarEntero(&condicionesOR), aux1);
+				rellenarPolacaChar(&polacaLista, desapilarEntero(&condicionesOR), aux2);
+				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), siguientePolaca);
+				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), siguientePolaca);
+		}else{
+		
+		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
+		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
+		}	
 	}
 	else{
 		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
@@ -333,3 +415,23 @@ void yyerror(const char* s)
 	     system ("Pause");
 	     exit (1);
      }
+
+
+void invertirSimbolo(char* aux){
+	
+	if(strcmp(aux, "BEQ") == 0){
+					strcpy(aux, "BNE");
+				}else if(strcmp(aux, "BNE") == 0){
+					strcpy(aux, "BEQ");
+				} else if(strcmp(aux, "BLT") == 0){
+					strcpy(aux, "BGE");
+				}else  if(strcmp(aux, "BLE") == 0){
+					printf("ENTRE A BEQ    SIMBOLOCOMPARACION TIENE %s\n", aux);
+					strcpy(aux, "BGT");
+					printf("SALGO DE BEQ    SIMBOLOCOMPARACION TIENE %s\n", aux);
+				}else	if(strcmp(aux, "BGT") == 0){
+					strcpy(aux, "BLE");
+				}else{
+					strcpy(aux, "BLT");
+				}
+}

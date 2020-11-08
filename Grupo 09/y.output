@@ -3,7 +3,7 @@ Terminals unused in grammar
    SALTO_LINEA
 
 
-Estado 82 conflictos: 1 desplazamiento(s)/reducción(ones)
+Estado 81 conflictos: 1 desplazamiento(s)/reducción(ones)
 
 
 Gramática
@@ -82,24 +82,27 @@ Gramática
    47        | elemento
 
    48 elemento: PARENT_A expresion PARENT_C
-   49         | MAX_TOKEN PARENT_A argumentos PARENT_C
-   50         | ID_T
-   51         | CONST_INT
-   52         | CONST_FLOAT
-   53         | CONST_STRING
 
-   54 argumentos: argumentos SEPARADOR_T expresion
-   55           | expresion
+   49 $@4: /* vacío */
+
+   50 elemento: MAX_TOKEN $@4 PARENT_A argumentos PARENT_C
+   51         | ID_T
+   52         | CONST_INT
+   53         | CONST_FLOAT
+   54         | CONST_STRING
+
+   55 argumentos: argumentos SEPARADOR_T expresion
+   56           | expresion
 
 
 Terminales con las reglas donde aparecen
 
 $end (0) 0
 error (256)
-CONST_INT (258) 51
-CONST_FLOAT (259) 52
-CONST_STRING (260) 53
-ID_T (261) 11 12 24 25 27 50
+CONST_INT (258) 52
+CONST_FLOAT (259) 53
+CONST_STRING (260) 54
+ID_T (261) 11 12 24 25 27 51
 ELSE_T (262) 20
 IF_T (263) 20 21
 OP_DISTINTO (264) 36
@@ -110,8 +113,8 @@ OP_MENOR (268) 10 12 41
 OP_MENORIGUAL (269) 40
 LLAVE_C (270) 16 22
 LLAVE_A (271) 16 22
-PARENT_C (272) 16 20 21 35 48 49
-PARENT_A (273) 16 20 21 35 48 49
+PARENT_C (272) 16 20 21 35 48 50
+PARENT_A (273) 16 20 21 35 48 50
 OP_DIVISION (274) 46
 OP_AS (275) 24 25
 OP_SUM (276) 42
@@ -119,7 +122,7 @@ OP_MENOS (277) 43
 OP_MUL (278) 45
 WHILE_T (279) 16
 SEP_LINEA (280) 24 25 26 27
-SEPARADOR_T (281) 11 54
+SEPARADOR_T (281) 11 55
 FLOAT_T (282) 13
 INTEGER_T (283) 14
 STRING_T (284) 15
@@ -131,7 +134,7 @@ CONST_T (289) 25
 TOKEN_AND (290) 30
 TOKEN_OR (291) 32
 TOKEN_NOT (292) 33
-MAX_TOKEN (293) 49
+MAX_TOKEN (293) 50
 SALTO_LINEA (294)
 
 
@@ -181,13 +184,15 @@ comparador (60)
     en la izquierda: 36 37 38 39 40 41, en la derecha: 34 35
 expresion (61)
     en la izquierda: 42 43 44, en la derecha: 24 25 34 35 42 43 48
-    54 55
+    55 56
 termino (62)
     en la izquierda: 45 46 47, en la derecha: 34 35 42 43 44 45 46
 elemento (63)
-    en la izquierda: 48 49 50 51 52 53, en la derecha: 26 45 46 47
-argumentos (64)
-    en la izquierda: 54 55, en la derecha: 49 54
+    en la izquierda: 48 50 51 52 53 54, en la derecha: 26 45 46 47
+$@4 (64)
+    en la izquierda: 49, en la derecha: 50
+argumentos (65)
+    en la izquierda: 55 56, en la derecha: 50 55
 
 
 estado 0
@@ -434,30 +439,30 @@ estado 22
 
 estado 23
 
-   51 elemento: CONST_INT .
-
-    $default  reduce usando la regla 51 (elemento)
-
-
-estado 24
-
-   52 elemento: CONST_FLOAT .
+   52 elemento: CONST_INT .
 
     $default  reduce usando la regla 52 (elemento)
 
 
-estado 25
+estado 24
 
-   53 elemento: CONST_STRING .
+   53 elemento: CONST_FLOAT .
 
     $default  reduce usando la regla 53 (elemento)
 
 
+estado 25
+
+   54 elemento: CONST_STRING .
+
+    $default  reduce usando la regla 54 (elemento)
+
+
 estado 26
 
-   50 elemento: ID_T .
+   51 elemento: ID_T .
 
-    $default  reduce usando la regla 50 (elemento)
+    $default  reduce usando la regla 51 (elemento)
 
 
 estado 27
@@ -478,9 +483,11 @@ estado 27
 
 estado 28
 
-   49 elemento: MAX_TOKEN . PARENT_A argumentos PARENT_C
+   50 elemento: MAX_TOKEN . $@4 PARENT_A argumentos PARENT_C
 
-    PARENT_A  desplazar e ir al estado 46
+    $default  reduce usando la regla 49 ($@4)
+
+    $@4  ir al estado 46
 
 
 estado 29
@@ -659,19 +666,9 @@ estado 45
 
 estado 46
 
-   49 elemento: MAX_TOKEN PARENT_A . argumentos PARENT_C
+   50 elemento: MAX_TOKEN $@4 . PARENT_A argumentos PARENT_C
 
-    CONST_INT     desplazar e ir al estado 23
-    CONST_FLOAT   desplazar e ir al estado 24
-    CONST_STRING  desplazar e ir al estado 25
-    ID_T          desplazar e ir al estado 26
-    PARENT_A      desplazar e ir al estado 27
-    MAX_TOKEN     desplazar e ir al estado 28
-
-    expresion   ir al estado 72
-    termino     ir al estado 35
-    elemento    ir al estado 36
-    argumentos  ir al estado 73
+    PARENT_A  desplazar e ir al estado 72
 
 
 estado 47
@@ -699,7 +696,7 @@ estado 49
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    expresion  ir al estado 74
+    expresion  ir al estado 73
     termino    ir al estado 35
     elemento   ir al estado 36
 
@@ -715,7 +712,7 @@ estado 50
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    termino   ir al estado 75
+    termino   ir al estado 74
     elemento  ir al estado 36
 
 
@@ -730,7 +727,7 @@ estado 51
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    termino   ir al estado 76
+    termino   ir al estado 75
     elemento  ir al estado 36
 
 
@@ -752,7 +749,7 @@ estado 53
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    elemento  ir al estado 77
+    elemento  ir al estado 76
 
 
 estado 54
@@ -766,7 +763,7 @@ estado 54
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    elemento  ir al estado 78
+    elemento  ir al estado 77
 
 
 estado 55
@@ -786,7 +783,7 @@ estado 55
     OP_SUM         desplazar e ir al estado 50
     OP_MENOS       desplazar e ir al estado 51
 
-    comparador  ir al estado 79
+    comparador  ir al estado 78
 
 
 estado 56
@@ -803,20 +800,20 @@ estado 57
 
     ID_T       desplazar e ir al estado 1
     IF_T       desplazar e ir al estado 2
-    LLAVE_A    desplazar e ir al estado 80
+    LLAVE_A    desplazar e ir al estado 79
     WHILE_T    desplazar e ir al estado 3
     DIM_T      desplazar e ir al estado 4
     TOKEN_PUT  desplazar e ir al estado 5
     GET_T      desplazar e ir al estado 6
     CONST_T    desplazar e ir al estado 7
 
-    sentencia           ir al estado 81
+    sentencia           ir al estado 80
     declaracion         ir al estado 11
     iteracion           ir al estado 12
     seleccion           ir al estado 13
     seleccion_con_else  ir al estado 14
     seleccion_sin_else  ir al estado 15
-    argumento_sel       ir al estado 82
+    argumento_sel       ir al estado 81
     asignacion          ir al estado 16
     imprimir            ir al estado 17
     leer                ir al estado 18
@@ -828,7 +825,7 @@ estado 58
 
     $default  reduce usando la regla 29 ($@2)
 
-    $@2  ir al estado 83
+    $@2  ir al estado 82
 
 
 estado 59
@@ -837,7 +834,7 @@ estado 59
 
     $default  reduce usando la regla 31 ($@3)
 
-    $@3  ir al estado 84
+    $@3  ir al estado 83
 
 
 estado 60
@@ -893,7 +890,7 @@ estado 66
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    termino   ir al estado 85
+    termino   ir al estado 84
     elemento  ir al estado 36
 
 
@@ -901,14 +898,14 @@ estado 67
 
    16 iteracion: WHILE_T PARENT_A condicion PARENT_C . LLAVE_A programa LLAVE_C
 
-    LLAVE_A  desplazar e ir al estado 86
+    LLAVE_A  desplazar e ir al estado 85
 
 
 estado 68
 
    12 dupla_asig: ID_T OP_MAYOR . AS_T OP_MENOR tipo
 
-    AS_T  desplazar e ir al estado 87
+    AS_T  desplazar e ir al estado 86
 
 
 estado 69
@@ -917,7 +914,7 @@ estado 69
 
     ID_T  desplazar e ir al estado 43
 
-    dupla_asig  ir al estado 88
+    dupla_asig  ir al estado 87
 
 
 estado 70
@@ -936,26 +933,22 @@ estado 71
 
 estado 72
 
-   42 expresion: expresion . OP_SUM termino
-   43          | expresion . OP_MENOS termino
-   55 argumentos: expresion .
+   50 elemento: MAX_TOKEN $@4 PARENT_A . argumentos PARENT_C
 
-    OP_SUM    desplazar e ir al estado 50
-    OP_MENOS  desplazar e ir al estado 51
+    CONST_INT     desplazar e ir al estado 23
+    CONST_FLOAT   desplazar e ir al estado 24
+    CONST_STRING  desplazar e ir al estado 25
+    ID_T          desplazar e ir al estado 26
+    PARENT_A      desplazar e ir al estado 27
+    MAX_TOKEN     desplazar e ir al estado 28
 
-    $default  reduce usando la regla 55 (argumentos)
+    expresion   ir al estado 88
+    termino     ir al estado 35
+    elemento    ir al estado 36
+    argumentos  ir al estado 89
 
 
 estado 73
-
-   49 elemento: MAX_TOKEN PARENT_A argumentos . PARENT_C
-   54 argumentos: argumentos . SEPARADOR_T expresion
-
-    PARENT_C     desplazar e ir al estado 89
-    SEPARADOR_T  desplazar e ir al estado 90
-
-
-estado 74
 
    25 asignacion: CONST_T ID_T OP_AS expresion . SEP_LINEA
    42 expresion: expresion . OP_SUM termino
@@ -963,10 +956,10 @@ estado 74
 
     OP_SUM     desplazar e ir al estado 50
     OP_MENOS   desplazar e ir al estado 51
-    SEP_LINEA  desplazar e ir al estado 91
+    SEP_LINEA  desplazar e ir al estado 90
 
 
-estado 75
+estado 74
 
    42 expresion: expresion OP_SUM termino .
    45 termino: termino . OP_MUL elemento
@@ -978,7 +971,7 @@ estado 75
     $default  reduce usando la regla 42 (expresion)
 
 
-estado 76
+estado 75
 
    43 expresion: expresion OP_MENOS termino .
    45 termino: termino . OP_MUL elemento
@@ -990,21 +983,21 @@ estado 76
     $default  reduce usando la regla 43 (expresion)
 
 
-estado 77
+estado 76
 
    46 termino: termino OP_DIVISION elemento .
 
     $default  reduce usando la regla 46 (termino)
 
 
-estado 78
+estado 77
 
    45 termino: termino OP_MUL elemento .
 
     $default  reduce usando la regla 45 (termino)
 
 
-estado 79
+estado 78
 
    35 comparacion: PARENT_A expresion comparador . termino PARENT_C
 
@@ -1015,11 +1008,11 @@ estado 79
     PARENT_A      desplazar e ir al estado 27
     MAX_TOKEN     desplazar e ir al estado 28
 
-    termino   ir al estado 92
+    termino   ir al estado 91
     elemento  ir al estado 36
 
 
-estado 80
+estado 79
 
    22 argumento_sel: LLAVE_A . programa LLAVE_C
 
@@ -1031,7 +1024,7 @@ estado 80
     GET_T      desplazar e ir al estado 6
     CONST_T    desplazar e ir al estado 7
 
-    programa            ir al estado 93
+    programa            ir al estado 92
     sentencia           ir al estado 10
     declaracion         ir al estado 11
     iteracion           ir al estado 12
@@ -1043,27 +1036,44 @@ estado 80
     leer                ir al estado 18
 
 
-estado 81
+estado 80
 
    23 argumento_sel: sentencia .
 
     $default  reduce usando la regla 23 (argumento_sel)
 
 
-estado 82
+estado 81
 
    20 seleccion_con_else: IF_T PARENT_A condicion PARENT_C argumento_sel . ELSE_T $@1 argumento_sel
    21 seleccion_sin_else: IF_T PARENT_A condicion PARENT_C argumento_sel .
 
-    ELSE_T  desplazar e ir al estado 94
+    ELSE_T  desplazar e ir al estado 93
 
     ELSE_T    [reduce usando la regla 21 (seleccion_sin_else)]
     $default  reduce usando la regla 21 (seleccion_sin_else)
 
 
-estado 83
+estado 82
 
    30 condicion: condicion TOKEN_AND $@2 . comparacion
+
+    CONST_INT     desplazar e ir al estado 23
+    CONST_FLOAT   desplazar e ir al estado 24
+    CONST_STRING  desplazar e ir al estado 25
+    ID_T          desplazar e ir al estado 26
+    PARENT_A      desplazar e ir al estado 37
+    MAX_TOKEN     desplazar e ir al estado 28
+
+    comparacion  ir al estado 94
+    expresion    ir al estado 41
+    termino      ir al estado 35
+    elemento     ir al estado 36
+
+
+estado 83
+
+   32 condicion: condicion TOKEN_OR $@3 . comparacion
 
     CONST_INT     desplazar e ir al estado 23
     CONST_FLOAT   desplazar e ir al estado 24
@@ -1080,23 +1090,6 @@ estado 83
 
 estado 84
 
-   32 condicion: condicion TOKEN_OR $@3 . comparacion
-
-    CONST_INT     desplazar e ir al estado 23
-    CONST_FLOAT   desplazar e ir al estado 24
-    CONST_STRING  desplazar e ir al estado 25
-    ID_T          desplazar e ir al estado 26
-    PARENT_A      desplazar e ir al estado 37
-    MAX_TOKEN     desplazar e ir al estado 28
-
-    comparacion  ir al estado 96
-    expresion    ir al estado 41
-    termino      ir al estado 35
-    elemento     ir al estado 36
-
-
-estado 85
-
    34 comparacion: expresion comparador termino .
    45 termino: termino . OP_MUL elemento
    46        | termino . OP_DIVISION elemento
@@ -1107,7 +1100,7 @@ estado 85
     $default  reduce usando la regla 34 (comparacion)
 
 
-estado 86
+estado 85
 
    16 iteracion: WHILE_T PARENT_A condicion PARENT_C LLAVE_A . programa LLAVE_C
 
@@ -1119,7 +1112,7 @@ estado 86
     GET_T      desplazar e ir al estado 6
     CONST_T    desplazar e ir al estado 7
 
-    programa            ir al estado 97
+    programa            ir al estado 96
     sentencia           ir al estado 10
     declaracion         ir al estado 11
     iteracion           ir al estado 12
@@ -1131,51 +1124,49 @@ estado 86
     leer                ir al estado 18
 
 
-estado 87
+estado 86
 
    12 dupla_asig: ID_T OP_MAYOR AS_T . OP_MENOR tipo
 
-    OP_MENOR  desplazar e ir al estado 98
+    OP_MENOR  desplazar e ir al estado 97
+
+
+estado 87
+
+   11 dupla_asig: ID_T SEPARADOR_T dupla_asig . SEPARADOR_T tipo
+
+    SEPARADOR_T  desplazar e ir al estado 98
 
 
 estado 88
 
-   11 dupla_asig: ID_T SEPARADOR_T dupla_asig . SEPARADOR_T tipo
+   42 expresion: expresion . OP_SUM termino
+   43          | expresion . OP_MENOS termino
+   56 argumentos: expresion .
 
-    SEPARADOR_T  desplazar e ir al estado 99
+    OP_SUM    desplazar e ir al estado 50
+    OP_MENOS  desplazar e ir al estado 51
+
+    $default  reduce usando la regla 56 (argumentos)
 
 
 estado 89
 
-   49 elemento: MAX_TOKEN PARENT_A argumentos PARENT_C .
+   50 elemento: MAX_TOKEN $@4 PARENT_A argumentos . PARENT_C
+   55 argumentos: argumentos . SEPARADOR_T expresion
 
-    $default  reduce usando la regla 49 (elemento)
+    PARENT_C     desplazar e ir al estado 99
+    SEPARADOR_T  desplazar e ir al estado 100
 
 
 estado 90
-
-   54 argumentos: argumentos SEPARADOR_T . expresion
-
-    CONST_INT     desplazar e ir al estado 23
-    CONST_FLOAT   desplazar e ir al estado 24
-    CONST_STRING  desplazar e ir al estado 25
-    ID_T          desplazar e ir al estado 26
-    PARENT_A      desplazar e ir al estado 27
-    MAX_TOKEN     desplazar e ir al estado 28
-
-    expresion  ir al estado 100
-    termino    ir al estado 35
-    elemento   ir al estado 36
-
-
-estado 91
 
    25 asignacion: CONST_T ID_T OP_AS expresion SEP_LINEA .
 
     $default  reduce usando la regla 25 (asignacion)
 
 
-estado 92
+estado 91
 
    35 comparacion: PARENT_A expresion comparador termino . PARENT_C
    45 termino: termino . OP_MUL elemento
@@ -1186,7 +1177,7 @@ estado 92
     OP_MUL       desplazar e ir al estado 54
 
 
-estado 93
+estado 92
 
     2 programa: programa . sentencia
    22 argumento_sel: LLAVE_A programa . LLAVE_C
@@ -1211,7 +1202,7 @@ estado 93
     leer                ir al estado 18
 
 
-estado 94
+estado 93
 
    20 seleccion_con_else: IF_T PARENT_A condicion PARENT_C argumento_sel ELSE_T . $@1 argumento_sel
 
@@ -1220,21 +1211,21 @@ estado 94
     $@1  ir al estado 103
 
 
-estado 95
+estado 94
 
    30 condicion: condicion TOKEN_AND $@2 comparacion .
 
     $default  reduce usando la regla 30 (condicion)
 
 
-estado 96
+estado 95
 
    32 condicion: condicion TOKEN_OR $@3 comparacion .
 
     $default  reduce usando la regla 32 (condicion)
 
 
-estado 97
+estado 96
 
     2 programa: programa . sentencia
    16 iteracion: WHILE_T PARENT_A condicion PARENT_C LLAVE_A programa . LLAVE_C
@@ -1259,7 +1250,7 @@ estado 97
     leer                ir al estado 18
 
 
-estado 98
+estado 97
 
    12 dupla_asig: ID_T OP_MAYOR AS_T OP_MENOR . tipo
 
@@ -1270,7 +1261,7 @@ estado 98
     tipo  ir al estado 108
 
 
-estado 99
+estado 98
 
    11 dupla_asig: ID_T SEPARADOR_T dupla_asig SEPARADOR_T . tipo
 
@@ -1281,16 +1272,27 @@ estado 99
     tipo  ir al estado 109
 
 
+estado 99
+
+   50 elemento: MAX_TOKEN $@4 PARENT_A argumentos PARENT_C .
+
+    $default  reduce usando la regla 50 (elemento)
+
+
 estado 100
 
-   42 expresion: expresion . OP_SUM termino
-   43          | expresion . OP_MENOS termino
-   54 argumentos: argumentos SEPARADOR_T expresion .
+   55 argumentos: argumentos SEPARADOR_T . expresion
 
-    OP_SUM    desplazar e ir al estado 50
-    OP_MENOS  desplazar e ir al estado 51
+    CONST_INT     desplazar e ir al estado 23
+    CONST_FLOAT   desplazar e ir al estado 24
+    CONST_STRING  desplazar e ir al estado 25
+    ID_T          desplazar e ir al estado 26
+    PARENT_A      desplazar e ir al estado 27
+    MAX_TOKEN     desplazar e ir al estado 28
 
-    $default  reduce usando la regla 54 (argumentos)
+    expresion  ir al estado 110
+    termino    ir al estado 35
+    elemento   ir al estado 36
 
 
 estado 101
@@ -1313,20 +1315,20 @@ estado 103
 
     ID_T       desplazar e ir al estado 1
     IF_T       desplazar e ir al estado 2
-    LLAVE_A    desplazar e ir al estado 80
+    LLAVE_A    desplazar e ir al estado 79
     WHILE_T    desplazar e ir al estado 3
     DIM_T      desplazar e ir al estado 4
     TOKEN_PUT  desplazar e ir al estado 5
     GET_T      desplazar e ir al estado 6
     CONST_T    desplazar e ir al estado 7
 
-    sentencia           ir al estado 81
+    sentencia           ir al estado 80
     declaracion         ir al estado 11
     iteracion           ir al estado 12
     seleccion           ir al estado 13
     seleccion_con_else  ir al estado 14
     seleccion_sin_else  ir al estado 15
-    argumento_sel       ir al estado 110
+    argumento_sel       ir al estado 111
     asignacion          ir al estado 16
     imprimir            ir al estado 17
     leer                ir al estado 18
@@ -1375,6 +1377,18 @@ estado 109
 
 
 estado 110
+
+   42 expresion: expresion . OP_SUM termino
+   43          | expresion . OP_MENOS termino
+   55 argumentos: argumentos SEPARADOR_T expresion .
+
+    OP_SUM    desplazar e ir al estado 50
+    OP_MENOS  desplazar e ir al estado 51
+
+    $default  reduce usando la regla 55 (argumentos)
+
+
+estado 111
 
    20 seleccion_con_else: IF_T PARENT_A condicion PARENT_C argumento_sel ELSE_T $@1 argumento_sel .
 
