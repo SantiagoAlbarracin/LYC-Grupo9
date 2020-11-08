@@ -21,7 +21,7 @@ else
 	if (actual < nombre)
 		PUT "no es mayor que 2";
 }
-contador:maximo(a+b,c,4);
+contador:maximo(a+b,4 ,maximo(c,11));
 if (actual > 3 or actual <> 5){
 	PUT "actual es > 2 y != 0";
 	suma:2*5;

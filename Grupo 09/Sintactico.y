@@ -288,7 +288,7 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++; 
 													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 													apilar(&maximoPila, max);
-													//banderaMaxAnidado--;
+													finmax=1;
       											}  else{
       											    enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
       											}										
