@@ -1,2 +1,78 @@
-0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	
-85	nombre	:	0	contador	:	02.5	nombre	+	suma	:	contador	9	CMP	BGE	contador	1	+	contador	:	suma	actual	2	CMP	BLT	actual	0	CMP	BNE	actual	nombre	CMP	BGT	
+1	85
+2	nombre
+3	:
+4	"Prueba.txt LyC Tema 3!"
+5	PUT
+6	"Ingrese un entero a actual: "
+7	PUT
+8	actual
+9	GET
+10	0
+11	contador
+12	:
+13	02.5
+14	nombre
+15	+
+16	suma
+17	:
+18	contador
+19	9
+20	CMP
+21	BGT
+22	28
+23	contador
+24	1
+25	+
+26	contador
+27	:
+28	"La suma es: "
+29	PUT
+30	suma
+31	PUT
+32	actual
+33	2
+34	CMP
+35	BLE
+36	47
+37	actual
+38	0
+39	CMP
+40	BEQ
+41	47
+42	"actual es > 2 y != 0"
+43	PUT
+44	2
+45	suma
+46	:
+47	5
+48	promedio
+49	:
+50	actual
+51	nombre
+52	CMP
+53	BGE
+54	57
+55	"no es mayor que 2"
+56	PUT
+57	actual
+58	3
+59	CMP
+60	BLE
+61	74
+62	actual
+63	5
+64	CMP
+65	BEQ
+66	74
+67	"actual es > 2 y != 0"
+68	PUT
+69	2
+70	5
+71	*
+72	suma
+73	:
+74	100
+75	7
+76	/
+77	promedio
+78	:

@@ -19,10 +19,14 @@ t_pila rellenar;
 char simboloComparacion[4];
 int posicionPolaca = 0;
 
+int condicionCompuesta = 0;
+int posicionComparacion = 0;
+int banderaOR = 0;
+
 
 int yylex();
 void yyerror(const char *s);
-
+void verificaCondicion();
 
 extern char* yytext;
 extern int yylineno;
@@ -138,7 +142,7 @@ tipo: 	FLOAT_T {acolar(&cola, "Float"); printf("ES UN TIPO: FLOAT \n");}
       ;
 
 
-iteracion:    WHILE_T PARENT_A condicion PARENT_C LLAVE_A programa LLAVE_C {printf("ES ITERACION: WHILE_T PROGRAMA \n");}
+iteracion:    WHILE_T PARENT_A condicion PARENT_C LLAVE_A programa LLAVE_C {verificaCondicion(); printf("ES ITERACION: WHILE_T PROGRAMA \n");}
               ;
 
 
@@ -151,14 +155,21 @@ seleccion:  seleccion_con_else {
             ;
 
 
-seleccion_con_else:  IF_T PARENT_A condicion PARENT_C  argumento_sel { apilarEntero(&posiciones, posicionPolaca); } ELSE_T argumento_sel  { 
-												rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), desapilarEntero(&posiciones)); 				
-												printf("ES SELECCION_CON_ELSE: IF ARGUMENTO_SEL ELSE ARGUMENTO_SEL \n");}
+seleccion_con_else:  IF_T PARENT_A condicion PARENT_C  argumento_sel  ELSE_T { printf("ES ITERACION: WHILE_T PROGRAMA \n"); 
+												verificaCondicion();
+											} 
+
+											argumento_sel  
+
+
+												{printf("ES SELECCION_CON_ELSE: IF ARGUMENTO_SEL ELSE ARGUMENTO_SEL \n");}
                 ;
 
 seleccion_sin_else: IF_T PARENT_A condicion PARENT_C  argumento_sel {
-												rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), desapilarEntero(&posiciones)); 
-												printf("ES SELECCION_SIN_ELSE: IF ARGUMENTO_SEL \n");}
+												
+												verificaCondicion();
+												printf("ES SELECCION_SIN_ELSE: IF ARGUMENTO_SEL \n");
+												}
                     ;
 
 
@@ -182,25 +193,38 @@ asignacion: ID_T OP_AS expresion SEP_LINEA { 	enlistar(&polacaLista, $1, posicio
             ;
 
 
-imprimir:   TOKEN_PUT elemento  SEP_LINEA {printf("ES IMPRIMIR: TOKEN_PUT CONST_STRING \n");}
+imprimir:   TOKEN_PUT elemento  SEP_LINEA { enlistar(&polacaLista, "PUT", posicionPolaca); posicionPolaca++;
+														printf("ES IMPRIMIR: TOKEN_PUT CONST_STRING \n");}
             ;
 
 
-leer:   GET_T ID_T  SEP_LINEA{ printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+leer:   GET_T ID_T  SEP_LINEA{	enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++; 
+								enlistar(&polacaLista, "GET", posicionPolaca); posicionPolaca++;
+								printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
         ;
 
 
 condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
-            |condicion TOKEN_AND comparacion {printf("CONDICION: CONDICION TOKEN_AND COMPARACION \n");}
-            |condicion TOKEN_OR comparacion {printf("CONDICION: CONDICION TOKEN_OR COMPARACION \n");}
-            |TOKEN_NOT comparacion {printf("CONDICION: TOKEN_NOT COMPARACION \n");}
+            |condicion TOKEN_AND { condicionCompuesta++; } comparacion 
+            															{ 
+            																printf("CONDICION: CONDICION TOKEN_AND COMPARACION \n");}
+
+
+            |condicion TOKEN_OR {  condicionCompuesta++; banderaOR++; } comparacion 
+            					
+            					{ 
+            						printf("CONDICION: CONDICION TOKEN_OR COMPARACION \n"); }
+
+            |TOKEN_NOT comparacion {  printf("CONDICION: TOKEN_NOT COMPARACION \n");}
             ;
+        
 
 
 comparacion: expresion comparador termino { enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
 											enlistar(&polacaLista, simboloComparacion, posicionPolaca); posicionPolaca++;
 											enlistar(&polacaLista, "  ", posicionPolaca );  apilarEntero(&rellenar, posicionPolaca); posicionPolaca++;
-											printf("EXPRESION COMPARADOR TERMINO \n");}
+											printf("EXPRESION COMPARADOR TERMINO \n");
+											}
 
 
 
@@ -209,12 +233,12 @@ comparacion: expresion comparador termino { enlistar(&polacaLista, "CMP", posici
       ;
 
 
-comparador:  OP_DISTINTO { strcpy(simboloComparacion, "BNE"); printf(" ES COMPARADOR: OP_DISTINTO \n");}
-       |OP_COMP { strcpy(simboloComparacion, "BEQ");  printf("ES COMPARADOR: OP_COMP \n");}
-       |OP_MAYORIGUAL { strcpy(simboloComparacion, "BLE");  printf("ES COMPARADOR: OP_MAYORIGUAL \n");}
-       |OP_MAYOR { strcpy(simboloComparacion, "BLT"); printf("ES COMPARADOR: OP_MAYOR \n");}
-       |OP_MENORIGUAL { strcpy(simboloComparacion, "BGE"); printf("ES COMPARADOR: OP_MENORIGUAL \n");}
-       |OP_MENOR { strcpy(simboloComparacion, "BGT"); printf("ES COMPARADOR: OP_MENOR \n");}
+comparador:  OP_DISTINTO { strcpy(simboloComparacion, "BEQ"); printf(" ES COMPARADOR: OP_DISTINTO \n");}
+    		 |OP_COMP { strcpy(simboloComparacion, "BNE");  printf("ES COMPARADOR: OP_COMP \n");}
+    		 |OP_MAYORIGUAL { strcpy(simboloComparacion, "BLT");  printf("ES COMPARADOR: OP_MAYORIGUAL \n");}
+    		 |OP_MAYOR { strcpy(simboloComparacion, "BLE"); printf("ES COMPARADOR: OP_MAYOR \n");}
+    		 |OP_MENORIGUAL { strcpy(simboloComparacion, "BGT"); printf("ES COMPARADOR: OP_MENORIGUAL \n");}
+    		 |OP_MENOR { strcpy(simboloComparacion, "BGE"); printf("ES COMPARADOR: OP_MENOR \n");}
        ;
 
 
@@ -250,12 +274,13 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 
 
 
-      |CONST_STRING {  insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");   printf("ES ELEMENTO: CONST STRING \n");}
+      |CONST_STRING { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");   		
+      					printf("ES ELEMENTO: CONST STRING \n");}
 
       ;
 
 argumentos: argumentos SEPARADOR_T expresion {printf("ES ARGUMENTO: ARGUMENTOS SEPARADOR_T EXPRESION \n");}
-        |expresion {printf("ES ARGUMENTO: EXPRESION \n");}
+        	|expresion {printf("ES ARGUMENTO: EXPRESION \n");}
         ;
 %%
 
@@ -286,6 +311,20 @@ int main(int argc,char *argv[])
 
   return 0;
 }
+
+
+void verificaCondicion(){
+	if(condicionCompuesta){
+		condicionCompuesta = 0;
+		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
+		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
+
+	}
+	else{
+		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
+	} 
+}
+
 
 
 void yyerror(const char* s)

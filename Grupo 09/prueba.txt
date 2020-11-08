@@ -13,9 +13,16 @@ PUT "La suma es: ";
 PUT suma;
 if (actual > 2 and actual <> 0){
 	PUT "actual es > 2 y != 0";
+	suma:2;
 }
 else
 {
+	promedio:5;
 	if (actual < nombre)
 		PUT "no es mayor que 2";
 }
+if (actual > 3 or actual <> 5){
+	PUT "actual es > 2 y != 0";
+	suma:2*5;
+}
+promedio:100/7;

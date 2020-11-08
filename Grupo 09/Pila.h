@@ -47,7 +47,7 @@ int apilarEntero(t_pila* p,int d)
 {
 
     r_nodo* nuevo=(r_nodo*)malloc(sizeof(r_nodo));
-
+    printf("SOY APILAR ENTERO Y VOY A APILAR UN  %d", d);
     if(!nuevo){
         printf("No se pudo reservar memoria\n");
         return 0;

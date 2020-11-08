@@ -77,25 +77,39 @@ int lista_llena(t_lista* l)
 int vaciar_lista_INTERMEDIO(t_lista* l, int posiciones)
 {
     l_nodo* aux;
-    int i = 0;
+    int i = 1;
     FILE* pf = fopen("intermedia.txt","w+");
     if(!pf){
         printf("No se pudo abrir el archivo;\n");
         return 0;
     }
-    while(i <= posiciones ){
-        fprintf(pf, "%d\t", i);
-        i++;
-    }
-    fprintf(pf, "\n");
 
     while(*l)
     {
         aux=*l;
         *l=aux->sig;
-        fprintf(pf,"%s\t", aux->elemento);
+        fprintf(pf,"%d\t%s\n",i, aux->elemento);
+        i++;
         free(aux);
     }
     fclose(pf);
     return 1;
+}
+
+
+void rellenarPolaca(t_lista *l, int posicion, int valor){
+
+    t_lista* aux = l;
+    char cadena[5];
+    while(*aux && (((*aux)->nroPolaca-posicion) != 0)  ){
+        aux = &(*aux)->sig;
+    }
+    if(!*aux){
+        printf("LISTA VACIAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!!\n");
+    }
+    if(((*aux)->nroPolaca-posicion) == 0){
+        itoa(valor, cadena, 10);
+        printf("VOY A RELLENAR EN RELLENARPOLACA CON:   %d\n", valor);
+        strcpy((*aux)->elemento, cadena );
+    }
 }
