@@ -391,7 +391,6 @@ void verificaCondicion(){
 				desapilar(&simbolosASS, aux2);
 
 				printf("ENTRE A BANDERAOR\n");
-				//invertirSimbolo(aux1);
 				invertirSimbolo(aux2);
 				
 				banderaOR = 0;
