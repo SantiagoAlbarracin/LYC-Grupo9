@@ -3,7 +3,6 @@ _0				0				NO			-			-
 _02.5				02.5				NO			-			-
 _1				1				NO			-			-
 _100				100				NO			-			-
-_11				11				NO			-			-
 _2				2				NO			-			-
 _4				4				NO			-			-
 _5				5				NO			-			-
@@ -17,7 +16,6 @@ _a				a				NO			-			-
 _actual				actual				NO			-			Float
 _actual es > 2 y != 0				actual es > 2 y != 0				NO			20			-
 _b				b				NO			-			-
-_c				c				NO			-			-
 _contador				contador				NO			-			Integer
 _no es mayor que 2				no es mayor que 2				NO			17			-
 _nombre				nombre				SI			-			-
