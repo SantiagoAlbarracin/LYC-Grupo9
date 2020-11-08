@@ -391,13 +391,13 @@ void verificaCondicion(){
 				desapilar(&simbolosASS, aux2);
 
 				printf("ENTRE A BANDERAOR\n");
-				invertirSimbolo(aux1);
+				//invertirSimbolo(aux1);
 				invertirSimbolo(aux2);
 				
 				banderaOR = 0;
 				rellenarPolacaChar(&polacaLista, desapilarEntero(&condicionesOR), aux1);
 				rellenarPolacaChar(&polacaLista, desapilarEntero(&condicionesOR), aux2);
-				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), siguientePolaca);
+				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
 				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), siguientePolaca);
 		}else{
 		

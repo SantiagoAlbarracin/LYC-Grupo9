@@ -92,8 +92,8 @@
 92	actual
 93	5
 94	CMP
-95	BNE
-96	97
+95	BEQ
+96	104
 97	"actual es > 2 y != 0"
 98	PUT
 99	2
