@@ -141,6 +141,15 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 		}
 
 	}
+	if( valor== SIN_VALOR){
+		nuevo->valor = (char*) malloc(sizeof(char) * 3);
+		if(!(nuevo->valor)){
+				printf("Error, no hay memoria\n.");
+				return -1;
+		}
+		strcpy(nuevo->valor, "-");
+
+	}
 
 	nuevo->tipo = (char*) malloc(sizeof(char) * strlen(tipo2) + 2);
 		if(!(nuevo->tipo)){

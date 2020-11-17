@@ -9,6 +9,7 @@
 #include "Pila.h"
 #include "Lista.h"
 
+
 tabla tablaSimbolos;
 t_lista polacaLista;
 t_cola cola;
@@ -16,8 +17,13 @@ t_pila pila;
 t_pila condicionesOR;
 t_pila simbolosASS;
 t_pila rellenar;
-
 t_pila maximoPila;
+
+t_pila pruMax;
+char pruChr[200];
+int pruNroMax = 0;
+int bandRecienCerreMax = 0;
+int pruCantArgsMax = 0;
 
 
 char simboloComparacion[4];
@@ -31,7 +37,7 @@ int pilaTam = 0;
 int banderaMaxAnidado = 0;
 
 int finmax = -1;
-
+int posicionPolacaWhile = 0;
 
 int yylex();
 void yyerror(const char *);
@@ -82,9 +88,9 @@ extern FILE* yyin;
 %token WHILE_T		
 %token SEP_LINEA	
 %token SEPARADOR_T	
-%token <strVal> FLOAT_T		
-%token <strVal> INTEGER_T	
-%token <strVal> STRING_T
+%token FLOAT_T		
+%token INTEGER_T	
+%token STRING_T
 %token DIM_T		
 %token AS_T			
 %token TOKEN_PUT	
@@ -97,10 +103,11 @@ extern FILE* yyin;
 %token SALTO_LINEA
 
 
-
 %left OP_SUM OP_MENOS
 %left OP_MUL OP_DIVISION
 
+%nonassoc IF_T	
+%nonassoc ELSE_T
 
 
 %%
@@ -134,7 +141,7 @@ declaracion:  DIM_T OP_MENOR dupla_asig OP_MAYOR  	{	printf("ES UNA LISTA DECLAR
 														if(strcmp(tipoVar, "String") == 0)
 															insertar(id, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE, tipoVar);
 														else
-															insertar(id, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, tipoVar);
+															insertar(id, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, tipoVar);
 
  														}
  													}
@@ -152,7 +159,19 @@ tipo: 	FLOAT_T {acolar(&cola, "Float"); printf("ES UN TIPO: FLOAT \n");}
       ;
 
 
-iteracion:    WHILE_T PARENT_A condicion PARENT_C LLAVE_A programa LLAVE_C {verificaCondicion(); printf("ES ITERACION: WHILE_T PROGRAMA \n");}
+iteracion:    WHILE_T { posicionPolacaWhile = posicionPolaca;} PARENT_A condicion PARENT_C LLAVE_A programa { if(posicionPolacaWhile > 0) {
+																												
+																												char cadena[15];
+																												
+																												enlistar(&polacaLista, "BI", posicionPolaca); posicionPolaca++;
+																												enlistar(&polacaLista, itoa(posicionPolacaWhile+1, cadena, 10), posicionPolaca); posicionPolaca++;
+																												
+																												
+																																																								
+																												posicionPolacaWhile = 0;	
+																													
+																												}
+																											} LLAVE_C {verificaCondicion(); printf("ES ITERACION: WHILE_T PROGRAMA \n");}
               ;
 
 
@@ -190,27 +209,59 @@ argumento_sel:  LLAVE_A programa LLAVE_C  {  printf("ES ARGUMENTOS_SEL: PROGRAMA
 
 
 
-asignacion: ID_T OP_AS expresion SEP_LINEA { 	enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;
-											 	enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+asignacion: ID_T OP_AS expresion SEP_LINEA { 	
+
+											
+												
+												char pruAux[8];
+												char cadenaMax[15];
+												
+											/**/
+												if(pruNroMax > 0){
+													strcpy(pruAux, "@max");
+													strcat(pruAux,itoa(pruNroMax+1,cadenaMax,10));
+													enlistar(&polacaLista, pruAux, posicionPolaca);
+													posicionPolaca++;
+																																											
+												}
+												
+												enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+												enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;
 												printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); 
-												insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE, "-");}
+												insertar($1, SIN_VALOR , &tablaSimbolos,NO_ES_CONSTANTE, "-");
+											
+
+										
+											}
 
 
-            |CONST_T  ID_T OP_AS expresion SEP_LINEA {  enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++;
-            											enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+            |CONST_T  ID_T OP_AS expresion SEP_LINEA {  enlistar(&polacaLista, ":", posicionPolaca); 
+            											posicionPolaca++;
+         											  	enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++;
             											printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
-            											insertar($2, CON_VALOR, &tablaSimbolos,ES_CONSTANTE, "-");}
+            											insertar($2, SIN_VALOR , &tablaSimbolos,ES_CONSTANTE, "-");
+														
+													
+													}
             ;
 
 
-imprimir:   TOKEN_PUT elemento  SEP_LINEA { enlistar(&polacaLista, "PUT", posicionPolaca); posicionPolaca++;
-														printf("ES IMPRIMIR: TOKEN_PUT CONST_STRING \n");}
+imprimir:   TOKEN_PUT { enlistar(&polacaLista, "PUT", posicionPolaca); posicionPolaca++; } elemento  SEP_LINEA { 
+											printf("ES IMPRIMIR: TOKEN_PUT CONST_STRING \n");
+											
+											
+										  }
             ;
 
 
-leer:   GET_T ID_T  SEP_LINEA{	enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++; 
-								enlistar(&polacaLista, "GET", posicionPolaca); posicionPolaca++;
-								printf("ES LEER: GET_T ID_T \n"); insertar($2, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+leer:   GET_T ID_T  SEP_LINEA{	enlistar(&polacaLista, "GET", posicionPolaca); posicionPolaca++;
+								enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++; 
+								printf("ES LEER: GET_T ID_T \n"); 
+								insertar($2, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); 
+								
+								
+							}
         ;
 
 
@@ -225,13 +276,17 @@ condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
         
 
 
-comparacion: expresion comparador termino { enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
-											enlistar(&polacaLista, simboloComparacion, posicionPolaca); apilarEntero(&condicionesOR, posicionPolaca);
+comparacion: expresion comparador termino { 
+											enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+											enlistar(&polacaLista, simboloComparacion, posicionPolaca); 
+											apilarEntero(&condicionesOR, posicionPolaca);
 											apilar(&simbolosASS, simboloComparacion); posicionPolaca++;
-											printf("VOY A ENLISTAR DPS DE ENLISTAR CMP   %s\n", simboloComparacion); 
-											enlistar(&polacaLista, "  ", posicionPolaca );  apilarEntero(&rellenar, posicionPolaca);  posicionPolaca++;
+											enlistar(&polacaLista, "  ", posicionPolaca );  
+											apilarEntero(&rellenar, posicionPolaca);  posicionPolaca++;
 											printf("EXPRESION COMPARADOR TERMINO \n");
-											}
+											
+										
+										   }
 
 
 
@@ -249,19 +304,56 @@ comparador:  OP_DISTINTO { strcpy(simboloComparacion, "BEQ"); printf(" ES COMPAR
        ;
 
 
-expresion:  expresion OP_SUM termino {  enlistar(&polacaLista, "+", posicionPolaca); posicionPolaca++; printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");}
+expresion:  expresion OP_SUM termino {  
+										enlistar(&polacaLista, "+", posicionPolaca); 
+										posicionPolaca++; 
+										printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");
+										
+								
 
-      |expresion OP_MENOS termino {  enlistar(&polacaLista, "-", posicionPolaca); posicionPolaca++; printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");}
+										/*bandRecienCerreMax = 0;*/
+								
+									}
+
+      |expresion OP_MENOS termino {  
+										enlistar(&polacaLista, "-", posicionPolaca); 
+										posicionPolaca++; 
+										printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");
+								
+
+										/*bandRecienCerreMax = 0;*/
+									
+										
+									}
 
       |termino {printf("ES EXPRESION: TERMINO \n");}
 
       ;
 
 
-termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*", posicionPolaca); posicionPolaca++; printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");}
+termino:    termino OP_MUL elemento {  
+										enlistar(&polacaLista, "*", posicionPolaca); 
+										posicionPolaca++; 
+										printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");
+								
+										
+										/*bandRecienCerreMax = 0;*/
+									
+						
+									}
 
-      |termino OP_DIVISION elemento {  enlistar(&polacaLista, "/", posicionPolaca); posicionPolaca++; 
-      									printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");}
+      |termino OP_DIVISION elemento {  
+										enlistar(&polacaLista, "/", posicionPolaca); 
+										posicionPolaca++; 
+      									printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");
+										
+						
+							
+							
+
+										/*bandRecienCerreMax = 0;		*/
+									
+									}
 
       |elemento {printf("ES TERMINO: ELEMENTO \n");}
       ;
@@ -269,7 +361,9 @@ termino:    termino OP_MUL elemento {  enlistar(&polacaLista, "*", posicionPolac
 
 elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION PARENT_C \n");}
       
-      |MAX_TOKEN { pilaTam++; banderaMaxAnidado++; } PARENT_A argumentos PARENT_C { char cadenaMax[5];
+      |MAX_TOKEN { pilaTam++; banderaMaxAnidado++; pruNroMax++; pruCantArgsMax = 0;} 
+			PARENT_A argumentos PARENT_C { 																										
+												char cadenaMax[5];
 												char max[8];
 												char maxAux[8];
 												strcpy(max, "@max");
@@ -279,75 +373,286 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
       												desapilar(&maximoPila, maxAux);
       												desapilar(&maximoPila, max);
       												pilaTam--;
-													enlistar(&polacaLista, maxAux, posicionPolaca); posicionPolaca++; 
-													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, maxAux, posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++; 
-													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+													
 													apilar(&maximoPila, max);
 													finmax=1;
       											}  else{
-      											    enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
       											    pilaTam = 0;
       											    finmax = -1;
       											    banderaMaxAnidado = 0;
-      											}										
+      											}	
+
+
+										
+												char pruAux[8];
+												
+												pruNroMax--;
+																																		
+												if (pruNroMax > 0){
+													bandRecienCerreMax = 1;
+													
+													strcpy(pruAux, "@max");
+													strcat(pruAux,itoa(pruNroMax+1,cadenaMax,10));
+													enlistar(&polacaLista, pruAux, posicionPolaca); posicionPolaca++;
+													
+													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+													
+													
+												
+													strcpy(pruAux, "@max");
+													strcat(pruAux,itoa(pruNroMax,cadenaMax,10));
+													enlistar(&polacaLista, pruAux, posicionPolaca); posicionPolaca++;
+											
+
+													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+												
+																				
+													enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;													
+											
+													enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
+												
+													enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
+												
+
+													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+												
+													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+													
+
+													
+											
+
+													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+																										
+												}else{													
+											
+													
+													if(bandRecienCerreMax == 0){
+														enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;												
+												
+														enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+														
+
+													
+
+
+
+														strcpy(pruAux, "@max");
+														strcat(pruAux,itoa(pruNroMax+1,cadenaMax,10));
+														enlistar(&polacaLista, pruAux, posicionPolaca); posicionPolaca++;
+											
+
+														enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+														
+
+														
+
+
+													
+																			
+														enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;								
+														
+
+														enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
+														
+
+
+														enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
+														
+
+														enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+													
+														enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+														enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+													
+
+													
+
+														enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+														
+														
+													}
+												}
+																							
+												
+												
       										}
 
 
-      |ID_T { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;  printf("ES ELEMENTO: ID_T  %s\n",$1); 
-      				insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); }
+      |ID_T { 	
+				enlistar(&polacaLista, $1, posicionPolaca); 
+				posicionPolaca++;  
+				printf("ES ELEMENTO: ID_T  %s\n",$1); 
+      			insertar($1, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); 
+						
+				
+				bandRecienCerreMax = 0;
+			
+			}
+			
 
 
-      |CONST_INT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST INT \n");}
+      |CONST_INT { 
+					enlistar(&polacaLista, $1, posicionPolaca); 
+					posicionPolaca++; 
+					insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  
+					printf("ES ELEMENTO: CONST INT \n");
+				
+					
+					bandRecienCerreMax = 0;
+					
+																					
+					
+																
+				}
 
 
-      |CONST_FLOAT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST FLOAT \n");}
+      |CONST_FLOAT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST FLOAT \n");
+	  
+														
+						
+						bandRecienCerreMax = 0;
+						
+														
+					}
 
 
 
       |CONST_STRING { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");   		
-      					printf("ES ELEMENTO: CONST STRING \n");}
+      					printf("ES ELEMENTO: CONST STRING \n");
+															
+						
+						bandRecienCerreMax = 0;						
+						
+						
+					}
 
       ;
 
-argumentos: argumentos SEPARADOR_T expresion { char cadenaMax[5];
-												char max[8];
-												strcpy(max, "@max");
-												strcat(max,itoa(pilaTam,cadenaMax,10));
-												if(banderaMaxAnidado < 2){
-													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++; 
-													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++; 
-													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
-													enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++; 
-													enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
-												}else{
-													if(finmax == -1){
-														enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++; 
-														enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
-												}
+argumentos: argumentos {pruCantArgsMax++;} SEPARADOR_T {
+															if(pruNroMax > 0 && pruCantArgsMax > 1){
+																char max[8];
+																char cadenaMax[5];
+																strcpy(max, "@max");
+																strcat(max,itoa(pilaTam,cadenaMax,10));
+																
+																enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
-				}
-											printf("ES ARGUMENTO: ARGUMENTOS SEPARADOR_T EXPRESION \n");}
+																enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;														
+
+																
+																enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+
+																insertar(max, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"Integer");
+
+																enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+
+																insertar("@aux", SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"Integer");
+
+																
+
+																enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+																
+
+																enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
+																
+																enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
+																
+
+																enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+																
+																enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+																enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+																
+
+																
+																
+																}
+
+														} 	expresion 	{ 
+																		char cadenaMax[5];
+																		char max[8];
+																		strcpy(max, "@max");
+																		strcat(max,itoa(pilaTam,cadenaMax,10));
+																		
+																		
+																		printf("ES ARGUMENTO: ARGUMENTOS SEPARADOR_T EXPRESION \n");
+
+																		insertar(max, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"Integer");
+
+																		
+																
+
+																		if (pruNroMax > 1){
+
+																			enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+																			enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+																				
+
+																			
+																			
+																			enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+																			
+
+																			
+																			enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+																			
 
 
 
-        	|expresion {  char cadenaMax[5];
+																			enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+																			
+
+																			enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
+																			
+
+																			enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
+																		
+
+																			enlistar(&polacaLista, "@aux", posicionPolaca); posicionPolaca++;
+																			
+																			enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
+
+																			enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+																			
+
+																			
+																			
+																		}
+																		
+																												
+																	}
+
+
+
+        	|expresion {  	
+							char cadenaMax[5];
 							char max[8];
 							strcpy(max, "@max");
 							strcat(max,itoa(pilaTam,cadenaMax,10));
 							apilar(&maximoPila, max);
-        					enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-        					 enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++; 
-        				printf("ES ARGUMENTO: EXPRESION \n"); }
+        					
+
+        					insertar(max, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"Integer");
+
+							printf("ES ARGUMENTO: EXPRESION \n"); 
+							
+	
+							enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;																
+
+
+							enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
+						
+
+														
+						}
         ;
 %%
 
@@ -369,14 +674,16 @@ int main(int argc,char *argv[])
     crear_pila(&rellenar);
     crear_pila(&maximoPila);
     crear_cola(&cola);
-
-	  yyparse();
+	crear_pila(&condicionesOR);
+	
+	
+	
+	yyparse();
   }
   fclose(yyin);
   vaciar_lista_TS(&tablaSimbolos);
   vaciar_lista_INTERMEDIO(&polacaLista, posicionPolaca);
   
-
   return 0;
 }
 
@@ -385,19 +692,19 @@ void verificaCondicion(){
 	if(condicionCompuesta){
 		condicionCompuesta = 0;
 		if(banderaOR){
-				char aux1[5];
-				char aux2[5];
+				char aux1[10];
+				char aux2[10];
 				desapilar(&simbolosASS, aux1);
 				desapilar(&simbolosASS, aux2);
 
-				printf("ENTRE A BANDERAOR\n");
 				invertirSimbolo(aux2);
 				
-				banderaOR = 0;
+				banderaOR = 0;	
+				
 				rellenarPolacaChar(&polacaLista, desapilarEntero(&condicionesOR), aux1);
 				rellenarPolacaChar(&polacaLista, desapilarEntero(&condicionesOR), aux2);
-				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
-				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), siguientePolaca);
+				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);			
+				rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), siguientePolaca);				
 		}else{
 		
 		rellenarPolaca(&polacaLista, desapilarEntero(&rellenar), posicionPolaca+1);
@@ -422,18 +729,17 @@ void yyerror(const char* s)
 void invertirSimbolo(char* aux){
 	
 	if(strcmp(aux, "BEQ") == 0){
-					strcpy(aux, "BNE");
-				}else if(strcmp(aux, "BNE") == 0){
-					strcpy(aux, "BEQ");
-				} else if(strcmp(aux, "BLT") == 0){
-					strcpy(aux, "BGE");
-				}else  if(strcmp(aux, "BLE") == 0){
-					printf("ENTRE A BEQ    SIMBOLOCOMPARACION TIENE %s\n", aux);
-					strcpy(aux, "BGT");
-					printf("SALGO DE BEQ    SIMBOLOCOMPARACION TIENE %s\n", aux);
-				}else	if(strcmp(aux, "BGT") == 0){
-					strcpy(aux, "BLE");
-				}else{
-					strcpy(aux, "BLT");
-				}
+		strcpy(aux, "BNE");
+	}else if(strcmp(aux, "BNE") == 0){
+		strcpy(aux, "BEQ");
+	} else if(strcmp(aux, "BLT") == 0){
+		strcpy(aux, "BGE");
+	}else  if(strcmp(aux, "BLE") == 0){
+		strcpy(aux, "BGT");
+	}else	if(strcmp(aux, "BGT") == 0){
+		strcpy(aux, "BLE");
+	}else{
+		strcpy(aux, "BLT");
+	}
 }
+
