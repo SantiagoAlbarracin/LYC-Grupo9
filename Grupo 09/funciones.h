@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Pila.h"
+#include "Cola.h"
+
 #define CON_VALOR 1
 #define SIN_VALOR 0
 #define ES_STRING 2
@@ -36,6 +39,13 @@ void crearTabla(tabla* lista);
 void eliminarCaracter(char *str, char garbage);
 
 int mi_strlen(char* cadena);
+
+int generarAssembler();
+
+int esOperadorBinario(char *);
+
+int esOperadorUnario(char *);
+
 
 
 
@@ -219,3 +229,144 @@ int mi_strlen(char* cadena){
 	return ( i <= 30 )? 1:0;
 }
 
+
+
+int generarAssembler(){
+	char cadena1[45];
+	char aux[150];
+	char aux2[150];
+	char aux3[150];
+	char varAux[30];
+
+	int i = 1;
+	t_pila pila;
+	crear_pila(&pila);
+
+	FILE *af = fopen("assembler.txt","w+");
+	if(!af){
+		printf("No se pudo abrir el archivo auxiliar.txt\n");
+		return 0;
+	}
+
+	FILE *pf = fopen("auxiliar.txt","r+");
+	if(!pf){
+		printf("No se pudo abrir el archivo auxiliar.txt\n");
+		return 0;
+	}
+
+
+	while(fgets(cadena1, 45, pf) != NULL){
+		eliminarCaracter(cadena1, '\n');
+		apilar(&pila, cadena1);	
+		verTope(&pila, cadena1);
+		if(esOperadorBinario(cadena1)){
+			printf("SOY OPERADOR BINARIO    %s\n",cadena1);
+			if(strcmp(cadena1, "+") == 0){
+				desapilar(&pila, aux2);
+				desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+        		fprintf(af,"%s\n",aux);
+        		desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+				fprintf(af,"%s\n",aux);
+				fprintf(af,"FADD\n");
+				strcpy(varAux, "_aux");
+				strcat(varAux, itoa(i, aux3, 10));
+				fprintf(af, "FSTP %s\n",varAux);
+				apilar(&pila, varAux);
+				i++;
+			}
+			if(strcmp(cadena1, "-") == 0){
+				desapilar(&pila, aux2);
+				desapilar(&pila, aux2);
+				strcpy(aux3, "FLD ");
+				strcat(aux3, aux2);
+        		desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+				fprintf(af,"%s\n",aux);
+				fprintf(af,"%s\n",aux3);
+				fprintf(af,"FSUB\n");
+				strcpy(varAux, "_aux");
+				strcat(varAux, itoa(i, aux3, 10));
+				fprintf(af, "FSTP %s\n",varAux);
+				apilar(&pila, varAux);
+				i++;
+			}
+			if(strcmp(cadena1, "*") == 0){
+				desapilar(&pila, aux2);
+				desapilar(&pila, aux2);
+				strcpy(aux3, "FLD ");
+				strcat(aux3, aux2);
+        		desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+				fprintf(af,"%s\n",aux);
+				fprintf(af,"%s\n",aux3);
+				fprintf(af,"FMUL \n");
+				strcpy(varAux, "_aux");
+				strcat(varAux, itoa(i, aux3, 10));
+				fprintf(af, "FSTP %s\n",varAux);
+				apilar(&pila, varAux);
+				i++;
+			}
+			if(strcmp(cadena1, "/") == 0){
+				desapilar(&pila, aux2);
+				desapilar(&pila, aux2);
+				strcpy(aux3, "FLD ");
+				strcat(aux3, aux2);
+        		desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+				fprintf(af,"%s\n",aux);
+				fprintf(af,"%s\n",aux3);
+				fprintf(af,"FDIV \n");
+				strcpy(varAux, "_aux");
+				strcat(varAux, itoa(i, aux3, 10));
+				fprintf(af, "FSTP %s\n",varAux);
+				apilar(&pila, varAux);
+				i++;
+			}
+			if(strcmp(cadena1, ":") == 0){
+				desapilar(&pila, aux2);
+				desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+        		fprintf(af,"%s\n",aux);
+        		fgets(cadena1, 45, pf);
+				strcpy(aux, "FSTP ");
+				strcat(aux, cadena1);
+				fprintf(af,"%s\n",aux);
+			}
+		}
+		if(esOperadorUnario(cadena1)){
+			printf("SOY OPERADOR UNARIO    %s\n",cadena1);
+		}
+
+	}
+	fclose(pf);
+	fclose(af);
+	return 1;
+}
+
+
+int esOperadorBinario(char *d){
+	if(strcmp(d,"+") == 0 || strcmp(d,"-") == 0 || strcmp(d,"/") == 0 || strcmp(d,"*") == 0 || strcmp(d,"<") == 0 || strcmp(d,"<=") == 0 
+			|| strcmp(d,">") == 0 || strcmp(d,">=") == 0 || strcmp(d,"==") == 0 || strcmp(d,"<>") == 0 || strcmp(d,":") == 0 ){
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+int esOperadorUnario(char *d){
+	if(strcmp(d, "PUT") == 0 || strcmp(d, "GET") == 0){
+		return 1;
+	}
+
+	return 0;
+}

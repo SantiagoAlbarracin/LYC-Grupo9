@@ -1,0 +1,71 @@
+FLD 85
+FSTP nombre
+
+FLD 0
+FSTP contador
+
+FLD 02.5
+FLD nombre
+FSUB
+FSTP _aux1
+FLD _aux1
+FSTP suma
+
+FLD 1
+FLD contador
+FADD
+FSTP _aux2
+FLD _aux2
+FSTP contador
+
+FLD 2
+FSTP suma
+
+FLD 5
+FSTP promedio
+
+FLD b
+FLD a
+FADD
+FSTP _aux3
+FLD _aux3
+FSTP @max1
+
+FLD 5
+FSTP @aux
+
+FLD @aux
+FSTP @max1
+
+FLD 4
+FSTP @max2
+
+FLD 6
+FSTP @aux
+
+FLD @aux
+FSTP @max2
+
+FLD @max2
+FSTP @aux
+
+FLD @aux
+FSTP @max1
+
+FLD @max1
+FSTP contador
+
+FLD 2
+FLD 5
+FMUL 
+FSTP _aux4
+FLD _aux4
+FSTP suma
+
+FLD 100
+FLD 7
+FDIV 
+FSTP _aux5
+FLD _aux5
+FSTP promedio
+

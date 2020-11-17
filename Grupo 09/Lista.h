@@ -79,7 +79,12 @@ int vaciar_lista_INTERMEDIO(t_lista* l, int posiciones)
     l_nodo* aux;
     int i = 1;
     FILE* pf = fopen("intermedia.txt","w+");
+    FILE* auxpf = fopen("auxiliar.txt","w+");
     if(!pf){
+        printf("No se pudo abrir el archivo;\n");
+        return 0;
+    }
+    if(!auxpf){
         printf("No se pudo abrir el archivo;\n");
         return 0;
     }
@@ -89,10 +94,12 @@ int vaciar_lista_INTERMEDIO(t_lista* l, int posiciones)
         aux=*l;
         *l=aux->sig;
         fprintf(pf,"%d\t%s\n",i, aux->elemento);
+        fprintf(auxpf,"%s\n", aux->elemento);
         i++;
         free(aux);
     }
     fclose(pf);
+    fclose(auxpf);
     return 1;
 }
 

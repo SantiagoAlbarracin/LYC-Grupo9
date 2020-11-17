@@ -5,8 +5,6 @@
 #include <conio.h>
 #include "y.tab.h"
 #include "funciones.h"
-#include "Cola.h"
-#include "Pila.h"
 #include "Lista.h"
 
 
@@ -34,6 +32,7 @@ int posicionComparacion = 0;
 int banderaOR = 0;
 int siguientePolaca = 0;
 int pilaTam = 0;
+int condicionNot = 0;
 int banderaMaxAnidado = 0;
 
 int finmax = -1;
@@ -112,7 +111,9 @@ extern FILE* yyin;
 
 %%
 
-programa_: programa {printf("EL PROGRAMA ES VALIDO!! \n");}    
+programa_: programa {	printf("EL PROGRAMA ES VALIDO!! \n");
+						generarAssembler();
+					}    
           ;
 
 
@@ -271,13 +272,17 @@ condicion:  comparacion {printf("CONDICION: COMPARACION \n");}
 
             |condicion TOKEN_OR {  condicionCompuesta++; } comparacion { banderaOR++; siguientePolaca = posicionPolaca+1; printf("CONDICION: CONDICION TOKEN_OR COMPARACION \n"); }
 
-            |TOKEN_NOT comparacion {  printf("CONDICION: TOKEN_NOT COMPARACION \n");}
+            |TOKEN_NOT {condicionNot ++;} comparacion {   printf("CONDICION: TOKEN_NOT COMPARACION \n");}
             ;
         
 
 
 comparacion: expresion comparador termino { 
 											enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+											if(condicionNot > 0){
+												invertirSimbolo(simboloComparacion);
+												condicionNot = 0;
+											}
 											enlistar(&polacaLista, simboloComparacion, posicionPolaca); 
 											apilarEntero(&condicionesOR, posicionPolaca);
 											apilar(&simbolosASS, simboloComparacion); posicionPolaca++;
@@ -291,7 +296,19 @@ comparacion: expresion comparador termino {
 
 
 
-			|PARENT_A	expresion comparador termino	PARENT_C  {printf("PARENT_A EXPRESION COMPARADOR TERMINO PARENT_C\n");}
+			|PARENT_A	expresion comparador termino	PARENT_C  {
+																	enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
+																	if(condicionNot > 0){
+																		invertirSimbolo(simboloComparacion);
+																		condicionNot = 0;
+																	}
+																	enlistar(&polacaLista, simboloComparacion, posicionPolaca); 
+																	apilarEntero(&condicionesOR, posicionPolaca);
+																	apilar(&simbolosASS, simboloComparacion); posicionPolaca++;
+																	enlistar(&polacaLista, "  ", posicionPolaca );  
+																	apilarEntero(&rellenar, posicionPolaca);  posicionPolaca++;
+																	printf("PARENT_A EXPRESION COMPARADOR TERMINO PARENT_C\n");
+																}
       ;
 
 

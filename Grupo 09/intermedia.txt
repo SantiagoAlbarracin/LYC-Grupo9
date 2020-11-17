@@ -12,7 +12,7 @@
 12	contador
 13	02.5
 14	nombre
-15	+
+15	-
 16	:
 17	suma
 18	contador
