@@ -22,6 +22,6 @@ _actual es > 2 y != 0				actual es > 2 y != 0				NO			20			-
 _b				-				NO			-			-
 _contador				-				NO			-			Integer
 _no es mayor que 2				no es mayor que 2				NO			17			-
-_nombre				-				-			-			-
+_nombre				-				SI			-			-
 _promedio				-				NO			-			Float
 _suma				-				NO			-			Float

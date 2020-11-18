@@ -2,9 +2,9 @@
 2	:
 3	nombre
 4	PUT
-5	"Prueba.txt LyC Tema 3!"
+5	_Prueba.txt LyC Tema 3!
 6	PUT
-7	"Ingrese un entero a actual: "
+7	_Ingrese un entero a actual: 
 8	GET
 9	actual
 10	0
@@ -29,7 +29,7 @@
 29	BI
 30	18
 31	PUT
-32	"La suma es: "
+32	_La suma es: 
 33	PUT
 34	suma
 35	actual
@@ -43,7 +43,7 @@
 43	BEQ
 44	50
 45	PUT
-46	"actual es > 2 y != 0"
+46	_actual es > 2 y != 0
 47	2
 48	:
 49	suma
@@ -56,7 +56,7 @@
 56	BGE
 57	60
 58	PUT
-59	"no es mayor que 2"
+59	_no es mayor que 2
 60	a
 61	b
 62	+
@@ -112,7 +112,7 @@
 112	BEQ
 113	121
 114	PUT
-115	"actual es > 2 y != 0"
+115	_actual es > 2 y != 0
 116	2
 117	5
 118	*

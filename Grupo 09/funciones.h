@@ -46,6 +46,7 @@ int esOperadorBinario(char *);
 
 int esOperadorUnario(char *);
 
+int insertar2(char* , int ,tabla*  , int , char* , char* );
 
 
 
@@ -132,6 +133,9 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 		nuevo->valor = NULL;
 		if(constante != ES_CONSTANTE)
 				strcpy(nuevo->constante,"NO");
+		if(constante == ES_CONSTANTE){
+				strcpy(nuevo->constante,"SI");
+			}
 
 
 		/*SI ES CON VALOR GUARDO EL VALOR DEL LEXEMA EN LA TUPLA*/
@@ -182,6 +186,112 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 
 }
 
+
+
+int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char* tipo2, char* retorno){
+
+	tuplaTabla* nuevo;
+	int resultado = 0;
+	nuevo = (tuplaTabla*) malloc(sizeof(tuplaTabla));
+	if(!nuevo){
+		printf("Error, no hay memoria\n.");
+		return -1;
+	}
+
+	/* SI ES UN STRING, LE SACO LAS COMILLAS, RESERVO LA MEMORIA Y ASIGNO LOS VALORES A LOS CAMPOS DE LA TUPLA*/
+	if(valor == ES_STRING){
+			nuevo->lexema = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
+			if(!(nuevo->lexema)){
+				printf("Error, no hay memoria\n.");
+				return -1;
+			}
+
+			eliminarCaracter(lexemaE, '"');
+			strcpy(nuevo->lexema, "_");
+			strcat(nuevo->lexema, lexemaE);
+			strcpy(retorno, nuevo->lexema);
+			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
+			if(!(nuevo->valor)){
+				printf("Error, no hay memoria\n.");
+				return -1;
+			}
+			if(constante == ES_CONSTANTE){
+				strcpy(nuevo->constante,"SI");
+			}else{
+				strcpy(nuevo->constante,"NO");
+
+			}
+			strcpy(nuevo->valor, lexemaE);
+			itoa(strlen(lexemaE), nuevo->longitud, 10);
+	}else{/* SI NO ES UN STRING VERIFICO SI ES CON VALOR O SIN VALOR. PARA AMBOS CASOS ASIGNO EL NOMBRE AL LEXEMA Y RESERVO LA MEMORIA*/
+		nuevo->lexema = (char*) malloc(sizeof(char) * strlen(lexemaE) + 2);
+
+		if(!(nuevo->lexema)){
+			printf("Error, no hay memoria\n.");
+			return -1;
+		}
+
+		strcpy(nuevo->lexema, "_");
+		strcpy(nuevo->longitud, "-");
+
+		strcat(nuevo->lexema, lexemaE);
+
+		
+		nuevo->valor = NULL;
+		if(constante != ES_CONSTANTE)
+				strcpy(nuevo->constante,"NO");
+		if(constante == ES_CONSTANTE){
+				strcpy(nuevo->constante,"SI");
+			}
+
+
+		/*SI ES CON VALOR GUARDO EL VALOR DEL LEXEMA EN LA TUPLA*/
+		if(valor == CON_VALOR){
+
+			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
+
+			if(!(nuevo->valor)){
+				printf("Error, no hay memoria\n.");
+				return -1;
+			}
+			if(constante == ES_CONSTANTE){
+				strcpy(nuevo->constante,"SI");
+			}
+
+			strcpy(nuevo->valor, lexemaE);
+		}
+
+	}
+	if( valor== SIN_VALOR){
+		nuevo->valor = (char*) malloc(sizeof(char) * 3);
+		if(!(nuevo->valor)){
+				printf("Error, no hay memoria\n.");
+				return -1;
+		}
+		strcpy(nuevo->valor, "-");
+
+	}
+
+	nuevo->tipo = (char*) malloc(sizeof(char) * strlen(tipo2) + 2);
+		if(!(nuevo->tipo)){
+			printf("Error, no hay memoria\n.");
+			return -1;
+		}
+		strcpy(nuevo->tipo,tipo2);
+
+	/*LO INSERTO EN LA LISTA DE MANERA ORDENADA*/
+
+	resultado = enlistar_en_orden(tablaSimbolos, nuevo);
+
+	if(resultado == 0){
+		free(nuevo);
+		return 0;
+	}
+
+	return 1;
+
+
+}
 
 void eliminarCaracter(char *str, char garbage) {
 
@@ -366,9 +476,10 @@ int generarAssembler(){
         		nroPos++;
 				strcpy(aux, "FSTP ");
 				strcat(aux, cadena1);
-				fprintf(af,"%s\n",aux);
+				fprintf(af,"%s",aux);
 			}
-			if(strcmp(cadena1, "CMP") == 0){
+			if(strcmp(cadena1, "CMP") == 0){  // DUDA CON ESTO PARA SABER COMO ASIGNAR SIMBOLOS EN COMPARACIONES
+				
 				fgets(cadena1, 45, pf);   //POR AHORA IGNORO. PUEDE VENIR BLE, BEQ, ETC...
         		nroPos++;
 				desapilar(&pila, aux2); //DESAPILO CMP
@@ -383,8 +494,9 @@ int generarAssembler(){
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
 				fprintf(af,"%s\n",aux);
-
-				fprintf(af,"FXCH\n");
+				if(strcmp(cadena1, "BLE") == 0){
+					fprintf(af,"FXCH\n");
+				}
 				fprintf(af,"FCOM\n");
 				fprintf(af,"FSTFSW AX\n");
 				fprintf(af,"SAHF\n");
@@ -405,6 +517,24 @@ int generarAssembler(){
 		}
 		if(esOperadorUnario(cadena1)){
 			printf("SOY OPERADOR UNARIO    %s\n",cadena1);
+			if(strcmp(cadena1, "PUT") == 0){
+				fgets(cadena1, 45, pf);   //LEO DE LA POLACA LO QUE PRINTEO
+        		nroPos++;
+        	//	fprintf(af,"displayString %s",cadena1);  // solo sirve para cuando vienen strings.
+        		fprintf(af,"mov dx, OFFSET %s",cadena1);
+        		fprintf(af,"mov ah, 9\n"); // ESTA VA ?
+        		fprintf(af,"int 21h\n");
+        		fprintf(af,"newline 1\n");
+			}
+			if(strcmp(cadena1, "GET") == 0){
+				fgets(cadena1, 45, pf);   //LEO DE LA POLACA DONDE GUARDO
+        		nroPos++;
+        		fprintf(af,"getFloat %s",cadena1); 
+
+			}
+
+
+
 		}
 
 		if( verTopeEntero(&salto) == nroPos ){

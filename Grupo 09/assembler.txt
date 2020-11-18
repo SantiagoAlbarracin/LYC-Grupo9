@@ -1,20 +1,25 @@
 FLD 85
 FSTP nombre
-
+mov dx, OFFSET _Prueba.txt LyC Tema 3!
+mov ah, 9
+int 21h
+newline 1
+mov dx, OFFSET _Ingrese un entero a actual: 
+mov ah, 9
+int 21h
+newline 1
+getFloat actual
 FLD 0
 FSTP contador
-
 FLD 02.5
 FLD nombre
 FSUB
 FSTP _aux1
 FLD _aux1
 FSTP suma
-
 _Etiq19:
 FLD 9
 FLD contador
-FXCH
 FCOM
 FSTFSW AX
 SAHF
@@ -25,37 +30,47 @@ FADD
 FSTP _aux2
 FLD _aux2
 FSTP contador
-
 JMP _Etiq19
 _Etiq23:
+mov dx, OFFSET _La suma es: 
+mov ah, 9
+int 21h
+newline 1
+mov dx, OFFSET suma
+mov ah, 9
+int 21h
+newline 1
 FLD 2
 FLD actual
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq39
 FLD 0
 FLD actual
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq44
+mov dx, OFFSET _actual es > 2 y != 0
+mov ah, 9
+int 21h
+newline 1
 FLD 2
 FSTP suma
-
 _Etiq44:
 FLD 5
 FSTP promedio
-
 FLD nombre
 FLD actual
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq57
+mov dx, OFFSET _no es mayor que 2
+mov ah, 9
+int 21h
+newline 1
 _Etiq57:
 FLD b
 FLD a
@@ -63,76 +78,65 @@ FADD
 FSTP _aux3
 FLD _aux3
 FSTP @max1
-
 FLD 5
 FSTP @aux
-
 FLD @aux
 FLD @max1
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq72
 FLD @aux
 FSTP @max1
-
 _Etiq72:
 FLD 4
 FSTP @max2
-
 FLD 6
 FSTP @aux
-
 FLD @aux
 FLD @max2
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq86
 FLD @aux
 FSTP @max2
-
 _Etiq86:
 FLD @max2
 FSTP @aux
-
 FLD @aux
 FLD @max1
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq97
 FLD @aux
 FSTP @max1
-
 _Etiq97:
 FLD @max1
 FSTP contador
-
 FLD 2
 FLD actual
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq108
 FLD 5
 FLD actual
-FXCH
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq113
+mov dx, OFFSET _actual es > 2 y != 0
+mov ah, 9
+int 21h
+newline 1
 FLD 2
 FLD 5
 FMUL 
 FSTP _aux4
 FLD _aux4
 FSTP suma
-
 _Etiq113:
 FLD 100
 FLD 7
@@ -140,4 +144,3 @@ FDIV
 FSTP _aux5
 FLD _aux5
 FSTP promedio
-

@@ -541,7 +541,9 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 
 
 
-      |CONST_STRING { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-");   		
+      |CONST_STRING { char auxString[40];
+      					insertar2($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString); 
+      					enlistar(&polacaLista, auxString, posicionPolaca); posicionPolaca++; ;   		
       					printf("ES ELEMENTO: CONST STRING \n");
 															
 						
