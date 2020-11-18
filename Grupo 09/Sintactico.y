@@ -5,7 +5,6 @@
 #include <conio.h>
 #include "y.tab.h"
 #include "funciones.h"
-#include "Lista.h"
 
 
 tabla tablaSimbolos;
@@ -112,7 +111,7 @@ extern FILE* yyin;
 %%
 
 programa_: programa {	printf("EL PROGRAMA ES VALIDO!! \n");
-						generarAssembler();
+						generarAssembler(&tablaSimbolos, &polacaLista, posicionPolaca);
 					}    
           ;
 
@@ -701,9 +700,7 @@ int main(int argc,char *argv[])
 	yyparse();
   }
   fclose(yyin);
-  vaciar_lista_TS(&tablaSimbolos);
-  vaciar_lista_INTERMEDIO(&polacaLista, posicionPolaca);
-  
+
   return 0;
 }
 

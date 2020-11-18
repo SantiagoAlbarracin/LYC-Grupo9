@@ -6,7 +6,7 @@
 typedef struct f_nodo
 {
     struct f_nodo* ant;
-    char dato[20];
+    char dato[200];
     int nro;
 }r_nodo;
 
@@ -40,6 +40,7 @@ int apilar(t_pila* p,char* d)
         return 0;
     }
     strcpy(nuevo->dato,d);
+
     nuevo->ant=*p;
     *p=nuevo;
 

@@ -3,13 +3,14 @@
 #include <string.h>
 #include "Pila.h"
 #include "Cola.h"
+#include "Lista.h"
 
 #define CON_VALOR 1
 #define SIN_VALOR 0
 #define ES_STRING 2
 #define ES_CONSTANTE 3
 #define NO_ES_CONSTANTE 5
-
+#define ARCHIVO_DATA "data.txt"
 
 
 typedef struct tupla{
@@ -26,7 +27,7 @@ typedef struct tupla{
 typedef  tuplaTabla* tabla;
 
 
-
+///////////////////////////////////////////////////////////////////
 
 int insertar(char* , int ,tabla*  , int ,  char*);
 
@@ -40,13 +41,17 @@ void eliminarCaracter(char *str, char garbage);
 
 int mi_strlen(char* cadena);
 
-int generarAssembler();
+int generarAssembler(t_lista *, t_lista* , int );
 
 int esOperadorBinario(char *);
 
 int esOperadorUnario(char *);
 
 int insertar2(char* , int ,tabla*  , int , char* , char* );
+
+char* str_replace(char* , char* , char* );
+
+//////////////////////////////////////////////////////////////////
 
 
 
@@ -66,6 +71,12 @@ int vaciar_lista_TS(tabla* l)
     	return 0;
     }
 
+	FILE *af = fopen(ARCHIVO_DATA,"w+");
+	if(!af){
+		printf("No se pudo abrir el archivo data.txt\n");
+		return 0;
+	}
+
    	fprintf(pf,"%s","LEXEMA\t\t\t\tVALOR\t\t\t\tCONSTANTE\t\t\tLONGITUD\t\t\tTIPO\n");
 
     while(*l)
@@ -74,16 +85,35 @@ int vaciar_lista_TS(tabla* l)
         *l=viejo->siguiente;
         fprintf(pf,"%s\t\t\t\t%s\t\t\t\t%s\t\t\t%s\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante, viejo->longitud, viejo->tipo);
 
+   		if(strchr(viejo->valor, '"') != NULL){
+   				fprintf(af,"%s\tdb\t%s , '$' , %s dup  (?)\n", viejo->lexema, viejo->valor, viejo->longitud);
+
+   		}else{
+   			if(strchr(viejo->valor, '-') != NULL){
+   					fprintf(af,"%s\tdd\t?\n", viejo->lexema);
+   			}
+   			else{	
+ 				if(strchr(viejo->valor, '.') == NULL){
+ 						fprintf(af,"%s\tdb\t%s.0\n",viejo->lexema, viejo->valor);
+ 				}else{
+ 						fprintf(af,"%s\tdb\t%s\n",viejo->lexema, viejo->valor);
+ 				}
+
+   			}
+
+   		}
+
         free(viejo);
     }
     fclose(pf);
+    fclose(af);
     return 1;
 
 }
 
 
 int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char* tipo2){
-
+	char auxiliar[35];
 	tuplaTabla* nuevo;
 	int resultado = 0;
 	nuevo = (tuplaTabla*) malloc(sizeof(tuplaTabla));
@@ -99,10 +129,10 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 				printf("Error, no hay memoria\n.");
 				return -1;
 			}
-
-			eliminarCaracter(lexemaE, '"');
+			strcpy(auxiliar, lexemaE);
+			eliminarCaracter(auxiliar, '"');
 			strcpy(nuevo->lexema, "_");
-			strcat(nuevo->lexema, lexemaE);
+			strcat(nuevo->lexema, auxiliar);
 			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
 			if(!(nuevo->valor)){
 				printf("Error, no hay memoria\n.");
@@ -189,7 +219,7 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 
 
 int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char* tipo2, char* retorno){
-
+	char auxiliar[35];
 	tuplaTabla* nuevo;
 	int resultado = 0;
 	nuevo = (tuplaTabla*) malloc(sizeof(tuplaTabla));
@@ -206,10 +236,12 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 				return -1;
 			}
 
-			eliminarCaracter(lexemaE, '"');
+			strcpy(auxiliar, lexemaE);
+			eliminarCaracter(auxiliar, '"');
 			strcpy(nuevo->lexema, "_");
-			strcat(nuevo->lexema, lexemaE);
+			strcat(nuevo->lexema, auxiliar);
 			strcpy(retorno, nuevo->lexema);
+
 			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
 			if(!(nuevo->valor)){
 				printf("Error, no hay memoria\n.");
@@ -280,7 +312,6 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 		strcpy(nuevo->tipo,tipo2);
 
 	/*LO INSERTO EN LA LISTA DE MANERA ORDENADA*/
-
 	resultado = enlistar_en_orden(tablaSimbolos, nuevo);
 
 	if(resultado == 0){
@@ -341,13 +372,15 @@ int mi_strlen(char* cadena){
 
 
 
-int generarAssembler(){
-	char cadena1[45];
+int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
+	char cadena1[200];
+	char cadena2[200];
+
 	char aux[150];
 	char aux2[150];
 	char aux3[150];
 	char varAux[30];
-
+	char* prueba;
 	int nroPos = 1;
 	int i = 1;
 
@@ -361,10 +394,13 @@ int generarAssembler(){
 	crear_pila(&etiquetas);
 	crear_pila(&whileEtiq);
 
+	vaciar_lista_TS(polaca);
+  	vaciar_lista_INTERMEDIO(intermedia, posPolaca);
+  
 
-	FILE *af = fopen("assembler.txt","w+");
+	FILE *af = fopen("assembler.asm","w+");
 	if(!af){
-		printf("No se pudo abrir el archivo auxiliar.txt\n");
+		printf("No se pudo abrir el archivo assembler.txt\n");
 		return 0;
 	}
 
@@ -374,8 +410,31 @@ int generarAssembler(){
 		return 0;
 	}
 
+	FILE *qf = fopen(ARCHIVO_DATA,"r+");
+	if(!qf){
+		printf("No se pudo abrir el archivo data.txt\n");
+		return 0;
+	}
 
-	while(fgets(cadena1, 45, pf) != NULL){
+	fprintf(af,".include macros2.asm\n");
+	fprintf(af,".include number.asm\n");
+	fprintf(af,".MODEL LARGE\n.386\n.STACK 200h\n\n");
+
+	fprintf(af,".DATA\n;variables de la tabla de simbolos\n\n");
+	while(fgets(cadena1, 200, qf) != NULL){
+		fprintf(af,"%s", cadena1);
+	}
+
+
+   fprintf(af,"\n\n\n\n");  // agrego saltos de linea al archivo assembler
+
+	fprintf(af,".CODE\n;comienzo de la zona de codigo\n\n\nstart:\n");
+	fprintf(af,"MOV EAX,@DATA\n");
+	fprintf(af,"MOV DS,EAX\n");
+	fprintf(af,"MOV ES,EAX\n\n\n");
+
+
+	while(fgets(cadena1, 200, pf) != NULL){
 		nroPos++;
 		eliminarCaracter(cadena1, '\n');
 		apilar(&pila, cadena1);	
@@ -385,19 +444,17 @@ int generarAssembler(){
 			strcat(aux, itoa(nroPos, aux2, 10));
 			apilar(&whileEtiq, aux);
 			fprintf(af,"%s:\n", aux);
-
 		}
 
 		if(strcmp(cadena1, "BI") == 0){
 			desapilar(&whileEtiq, aux);
 			fprintf(af,"JMP %s\n", aux);
-			fgets(cadena1, 45, pf);
+			fgets(cadena1, 200, pf);
 			nroPos++;
 		}
 
 
 		if(esOperadorBinario(cadena1)){
-			printf("SOY OPERADOR BINARIO    %s\n",cadena1);
 			if(strcmp(cadena1, "+") == 0){
 				desapilar(&pila, aux2);
 				desapilar(&pila, aux2);
@@ -472,7 +529,7 @@ int generarAssembler(){
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
         		fprintf(af,"%s\n",aux);
-        		fgets(cadena1, 45, pf);
+        		fgets(cadena1, 200, pf);
         		nroPos++;
 				strcpy(aux, "FSTP ");
 				strcat(aux, cadena1);
@@ -480,7 +537,7 @@ int generarAssembler(){
 			}
 			if(strcmp(cadena1, "CMP") == 0){  // DUDA CON ESTO PARA SABER COMO ASIGNAR SIMBOLOS EN COMPARACIONES
 				
-				fgets(cadena1, 45, pf);   //POR AHORA IGNORO. PUEDE VENIR BLE, BEQ, ETC...
+				fgets(cadena1, 200, pf);   //POR AHORA IGNORO. PUEDE VENIR BLE, BEQ, ETC...
         		nroPos++;
 				desapilar(&pila, aux2); //DESAPILO CMP
 				desapilar(&pila, aux2);
@@ -504,7 +561,7 @@ int generarAssembler(){
 				
 				strcat(aux, itoa(nroPos, aux2, 10));
 				apilar(&etiquetas, aux);
-				fgets(cadena1, 45, pf);   //LEO LA POSICION A LA QUE SALTO
+				fgets(cadena1, 200, pf);   //LEO LA POSICION A LA QUE SALTO
         		nroPos++;
 
 				apilarEntero(&salto, atoi(cadena1));
@@ -516,9 +573,8 @@ int generarAssembler(){
 
 		}
 		if(esOperadorUnario(cadena1)){
-			printf("SOY OPERADOR UNARIO    %s\n",cadena1);
 			if(strcmp(cadena1, "PUT") == 0){
-				fgets(cadena1, 45, pf);   //LEO DE LA POLACA LO QUE PRINTEO
+				fgets(cadena1, 200, pf);   //LEO DE LA POLACA LO QUE PRINTEO
         		nroPos++;
         	//	fprintf(af,"displayString %s",cadena1);  // solo sirve para cuando vienen strings.
         		fprintf(af,"mov dx, OFFSET %s",cadena1);
@@ -527,7 +583,7 @@ int generarAssembler(){
         		fprintf(af,"newline 1\n");
 			}
 			if(strcmp(cadena1, "GET") == 0){
-				fgets(cadena1, 45, pf);   //LEO DE LA POLACA DONDE GUARDO
+				fgets(cadena1, 200, pf);   //LEO DE LA POLACA DONDE GUARDO
         		nroPos++;
         		fprintf(af,"getFloat %s",cadena1); 
 
@@ -545,8 +601,14 @@ int generarAssembler(){
 
 
 	}
+
+	fprintf(af,"MOV EAX, 4c00h  ; termina la ejecucion\n");
+	fprintf(af,"INT 21h\n");
+	fprintf(af,"END start;\n;\n");
+
 	fclose(pf);
 	fclose(af);
+	fclose(qf);
 	return 1;
 }
 
@@ -568,4 +630,60 @@ int esOperadorUnario(char *d){
 	}
 
 	return 0;
+}
+
+
+char* str_replace(char* search, char* replace, char* subject) {
+	int i, j, k;
+	
+	int searchSize = strlen(search);
+	int replaceSize = strlen(replace);
+	int size = strlen(subject);
+
+	char* ret;
+
+	if (!searchSize) {
+		ret = malloc(size + 1);
+		for (i = 0; i <= size; i++) {
+			ret[i] = subject[i];
+		}
+		return ret;
+	}
+	
+	int retAllocSize = (strlen(subject) + 1) * 2; 
+	ret = malloc(retAllocSize);
+
+	int bufferSize = 0; 
+	char* foundBuffer = malloc(searchSize); 
+	
+	for (i = 0, j = 0; i <= size; i++) {
+		
+		if (retAllocSize <= j + replaceSize) {
+			retAllocSize *= 2;
+			ret = (char*) realloc(ret, retAllocSize);
+		}
+		
+		else if (subject[i] == search[bufferSize]) {
+			foundBuffer[bufferSize] = subject[i];
+			bufferSize++;
+
+			if (bufferSize == searchSize) {
+				bufferSize = 0;
+				for (k = 0; k < replaceSize; k++) {
+					ret[j++] = replace[k];
+				}
+			}
+		}
+		else {
+			for (k = 0; k < bufferSize; k++) {
+				ret[j++] = foundBuffer[k];
+			}
+			bufferSize = 0;
+			
+			ret[j++] = subject[i];
+		}
+	}
+	free(foundBuffer);
+	
+	return ret;
 }
