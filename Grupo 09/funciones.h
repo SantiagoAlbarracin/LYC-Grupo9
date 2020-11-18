@@ -238,9 +238,19 @@ int generarAssembler(){
 	char aux3[150];
 	char varAux[30];
 
+	int nroPos = 1;
 	int i = 1;
+
 	t_pila pila;
+	t_pila salto;
+	t_pila etiquetas;
+	t_pila whileEtiq;
+
 	crear_pila(&pila);
+	crear_pila(&salto);
+	crear_pila(&etiquetas);
+	crear_pila(&whileEtiq);
+
 
 	FILE *af = fopen("assembler.txt","w+");
 	if(!af){
@@ -256,9 +266,26 @@ int generarAssembler(){
 
 
 	while(fgets(cadena1, 45, pf) != NULL){
+		nroPos++;
 		eliminarCaracter(cadena1, '\n');
 		apilar(&pila, cadena1);	
 		verTope(&pila, cadena1);
+		if(strcmp(cadena1, "WHILE") == 0){
+			strcpy(aux, "_Etiq");
+			strcat(aux, itoa(nroPos, aux2, 10));
+			apilar(&whileEtiq, aux);
+			fprintf(af,"%s:\n", aux);
+
+		}
+
+		if(strcmp(cadena1, "BI") == 0){
+			desapilar(&whileEtiq, aux);
+			fprintf(af,"JMP %s\n", aux);
+			fgets(cadena1, 45, pf);
+			nroPos++;
+		}
+
+
 		if(esOperadorBinario(cadena1)){
 			printf("SOY OPERADOR BINARIO    %s\n",cadena1);
 			if(strcmp(cadena1, "+") == 0){
@@ -336,14 +363,56 @@ int generarAssembler(){
 				strcat(aux, aux2);
         		fprintf(af,"%s\n",aux);
         		fgets(cadena1, 45, pf);
+        		nroPos++;
 				strcpy(aux, "FSTP ");
 				strcat(aux, cadena1);
 				fprintf(af,"%s\n",aux);
 			}
+			if(strcmp(cadena1, "CMP") == 0){
+				fgets(cadena1, 45, pf);   //POR AHORA IGNORO. PUEDE VENIR BLE, BEQ, ETC...
+        		nroPos++;
+				desapilar(&pila, aux2); //DESAPILO CMP
+				desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+        		fprintf(af,"%s\n",aux);
+        		
+        		
+        		
+				desapilar(&pila, aux2);
+				strcpy(aux, "FLD ");
+				strcat(aux, aux2);
+				fprintf(af,"%s\n",aux);
+
+				fprintf(af,"FXCH\n");
+				fprintf(af,"FCOM\n");
+				fprintf(af,"FSTFSW AX\n");
+				fprintf(af,"SAHF\n");
+				strcpy(aux, "_Etiq");
+				
+				strcat(aux, itoa(nroPos, aux2, 10));
+				apilar(&etiquetas, aux);
+				fgets(cadena1, 45, pf);   //LEO LA POSICION A LA QUE SALTO
+        		nroPos++;
+
+				apilarEntero(&salto, atoi(cadena1));
+				fprintf(af,"JNA %s\n", aux);
+
+
+			}
+
+
 		}
 		if(esOperadorUnario(cadena1)){
 			printf("SOY OPERADOR UNARIO    %s\n",cadena1);
 		}
+
+		if( verTopeEntero(&salto) == nroPos ){
+			desapilar(&etiquetas, aux);
+			fprintf(af,"%s:\n", aux);
+
+		}
+
 
 	}
 	fclose(pf);
@@ -353,8 +422,8 @@ int generarAssembler(){
 
 
 int esOperadorBinario(char *d){
-	if(strcmp(d,"+") == 0 || strcmp(d,"-") == 0 || strcmp(d,"/") == 0 || strcmp(d,"*") == 0 || strcmp(d,"<") == 0 || strcmp(d,"<=") == 0 
-			|| strcmp(d,">") == 0 || strcmp(d,">=") == 0 || strcmp(d,"==") == 0 || strcmp(d,"<>") == 0 || strcmp(d,":") == 0 ){
+	if(strcmp(d,"+") == 0 || strcmp(d,"-") == 0 || strcmp(d,"/") == 0 || strcmp(d,"*") == 0 || strcmp(d,"BGE") == 0 || strcmp(d,"BGT") == 0 
+			|| strcmp(d,"BLE") == 0 || strcmp(d,"BLT") == 0 || strcmp(d,"BNE") == 0 || strcmp(d,"BEQ") == 0 || strcmp(d,":") == 0 || strcmp(d,"CMP") == 0 ){
 
 		return 1;
 	}

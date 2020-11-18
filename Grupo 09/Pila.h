@@ -21,6 +21,7 @@ int pila_vacia(t_pila*);
 void vaciar_pila(t_pila*);
 int apilarTODO(t_pila*, char*, int);
 int verTope(t_pila *, char *);
+int verTopeEntero(t_pila* );
 //////////////////////////
 
 
@@ -77,6 +78,14 @@ int apilarEntero(t_pila* p,int d)
     *p=nuevo;
 
     return 1;
+}
+
+
+int verTopeEntero(t_pila* p){
+    if(!*p){
+        return -1;
+    }
+    return (*p)->nro;
 }
 
 int desapilar(t_pila* p,char* d)

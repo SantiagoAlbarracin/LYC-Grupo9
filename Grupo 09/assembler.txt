@@ -11,6 +11,14 @@ FSTP _aux1
 FLD _aux1
 FSTP suma
 
+_Etiq19:
+FLD 9
+FLD contador
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq23
 FLD 1
 FLD contador
 FADD
@@ -18,12 +26,37 @@ FSTP _aux2
 FLD _aux2
 FSTP contador
 
+JMP _Etiq19
+_Etiq23:
+FLD 2
+FLD actual
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq39
+FLD 0
+FLD actual
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq44
 FLD 2
 FSTP suma
 
+_Etiq44:
 FLD 5
 FSTP promedio
 
+FLD nombre
+FLD actual
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq57
+_Etiq57:
 FLD b
 FLD a
 FADD
@@ -35,8 +68,16 @@ FLD 5
 FSTP @aux
 
 FLD @aux
+FLD @max1
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq72
+FLD @aux
 FSTP @max1
 
+_Etiq72:
 FLD 4
 FSTP @max2
 
@@ -44,17 +85,47 @@ FLD 6
 FSTP @aux
 
 FLD @aux
+FLD @max2
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq86
+FLD @aux
 FSTP @max2
 
+_Etiq86:
 FLD @max2
 FSTP @aux
 
 FLD @aux
+FLD @max1
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq97
+FLD @aux
 FSTP @max1
 
+_Etiq97:
 FLD @max1
 FSTP contador
 
+FLD 2
+FLD actual
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq108
+FLD 5
+FLD actual
+FXCH
+FCOM
+FSTFSW AX
+SAHF
+JNA _Etiq113
 FLD 2
 FLD 5
 FMUL 
@@ -62,6 +133,7 @@ FSTP _aux4
 FLD _aux4
 FSTP suma
 
+_Etiq113:
 FLD 100
 FLD 7
 FDIV 

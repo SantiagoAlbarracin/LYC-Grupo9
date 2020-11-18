@@ -160,7 +160,8 @@ tipo: 	FLOAT_T {acolar(&cola, "Float"); printf("ES UN TIPO: FLOAT \n");}
       ;
 
 
-iteracion:    WHILE_T { posicionPolacaWhile = posicionPolaca;} PARENT_A condicion PARENT_C LLAVE_A programa { if(posicionPolacaWhile > 0) {
+iteracion:    WHILE_T { posicionPolacaWhile = posicionPolaca; enlistar(&polacaLista, "WHILE", posicionPolaca); posicionPolaca++;} 
+								PARENT_A condicion PARENT_C LLAVE_A programa { if(posicionPolacaWhile > 0) {
 																												
 																												char cadena[15];
 																												
