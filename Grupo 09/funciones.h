@@ -65,6 +65,7 @@ void crearTabla(tabla* lista){
 int vaciar_lista_TS(tabla* l)
 {
     tuplaTabla* viejo;
+    char varAux[20];
     FILE* pf = fopen("ts.txt","w+");
     if(!pf){
     	printf("No se pudo abrir el archivo;\n");
@@ -105,6 +106,9 @@ int vaciar_lista_TS(tabla* l)
 
         free(viejo);
     }
+    strcpy(varAux, "_varaux");
+    fprintf(af,"%s\tdd\t?\n", varAux);
+
     fclose(pf);
     fclose(af);
     return 1;
@@ -397,7 +401,6 @@ int mi_strlen(char* cadena){
 int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 	char cadena1[200];
 	char cadena2[200];
-
 	char aux[150];
 	char aux2[150];
 	char aux3[150];
@@ -418,7 +421,8 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 
 	vaciar_lista_TS(polaca);
   	vaciar_lista_INTERMEDIO(intermedia, posPolaca);
-  
+  	strcpy(varAux, "_varaux");
+
 
 	FILE *af = fopen("assembler.asm","w+");
 	if(!af){
@@ -488,8 +492,6 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				strcat(aux, aux2);
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"FADD\n");
-				strcpy(varAux, "_aux");
-				strcat(varAux, itoa(i, aux3, 10));
 				fprintf(af, "FSTP %s\n",varAux);
 				apilar(&pila, varAux);
 				i++;
@@ -505,8 +507,6 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FSUB\n");
-				strcpy(varAux, "_aux");
-				strcat(varAux, itoa(i, aux3, 10));
 				fprintf(af, "FSTP %s\n",varAux);
 				apilar(&pila, varAux);
 				i++;
@@ -522,8 +522,6 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FMUL \n");
-				strcpy(varAux, "_aux");
-				strcat(varAux, itoa(i, aux3, 10));
 				fprintf(af, "FSTP %s\n",varAux);
 				apilar(&pila, varAux);
 				i++;
@@ -539,8 +537,6 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FDIV \n");
-				strcpy(varAux, "_aux");
-				strcat(varAux, itoa(i, aux3, 10));
 				fprintf(af, "FSTP %s\n",varAux);
 				apilar(&pila, varAux);
 				i++;

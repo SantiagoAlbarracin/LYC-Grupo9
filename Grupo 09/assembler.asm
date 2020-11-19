@@ -34,6 +34,7 @@ _noesmayorque2	db	"no es mayor que 2" , '$' , 19 dup  (?)
 _nombre	dd	?
 _promedio	dd	?
 _suma	dd	?
+_varaux	dd	?
 
 
 
@@ -64,12 +65,12 @@ FSTP _contador
 FLD _02_5
 FLD _nombre
 FSUB
-FSTP _aux1
+FSTP _varaux
 FLD _3
-FLD _aux1
+FLD _varaux
 FADD
-FSTP _aux2
-FLD _aux2
+FSTP _varaux
+FLD _varaux
 FSTP _suma
 _Etiq21:
 FLD _9
@@ -81,8 +82,8 @@ JNA _Etiq25
 FLD _1
 FLD _contador
 FADD
-FSTP _aux3
-FLD _aux3
+FSTP _varaux
+FLD _varaux
 FSTP _contador
 JMP _Etiq21
 _Etiq25:
@@ -129,8 +130,8 @@ _Etiq59:
 FLD _b
 FLD _a
 FADD
-FSTP _aux4
-FLD _aux4
+FSTP _varaux
+FLD _varaux
 FSTP @max1
 FLD _5
 FSTP @aux
@@ -188,15 +189,15 @@ newline 1
 FLD _2
 FLD _5
 FMUL 
-FSTP _aux5
-FLD _aux5
+FSTP _varaux
+FLD _varaux
 FSTP _suma
 _Etiq115:
 FLD _100
 FLD _7
 FDIV 
-FSTP _aux6
-FLD _aux6
+FSTP _varaux
+FLD _varaux
 FSTP _promedio
 MOV EAX, 4c00h  ; termina la ejecucion
 INT 21h
