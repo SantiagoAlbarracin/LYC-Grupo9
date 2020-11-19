@@ -1,6 +1,6 @@
 LEXEMA				VALOR				CONSTANTE			LONGITUD			TIPO
 _0				0				NO			-			-
-_02.5				02.5				NO			-			-
+_02_5				02.5				NO			-			-
 _1				1				NO			-			-
 _100				100				NO			-			-
 _2				2				NO			-			-
@@ -14,15 +14,15 @@ _9				9				NO			-			-
 _@aux				-				NO			-			Integer
 _@max1				-				NO			-			Integer
 _@max2				-				NO			-			Integer
-_Ingrese un entero a actual: 				"Ingrese un entero a actual: "				NO			30			-
-_La suma es: 				"La suma es: "				NO			14			-
-_Prueba.txt LyC Tema 3!				"Prueba.txt LyC Tema 3!"				NO			24			-
+_Ingreseunenteroaactual				"Ingrese un entero a actual: "				NO			30			-
+_Lasumaes				"La suma es: "				NO			14			-
+_Prueba_txtLyCTema3				"Prueba.txt LyC Tema 3!"				NO			24			-
 _a				-				NO			-			-
 _actual				-				NO			-			Float
-_actual es > 2 y != 0				"actual es > 2 y != 0"				NO			22			-
+_actuales2y_0				"actual es > 2 y != 0"				NO			22			-
 _b				-				NO			-			-
 _contador				-				NO			-			Integer
-_no es mayor que 2				"no es mayor que 2"				NO			19			-
-_nombre				-				SI			-			-
+_noesmayorque2				"no es mayor que 2"				NO			19			-
+_nombre				-				NO			-			-
 _promedio				-				NO			-			Float
 _suma				-				NO			-			Float

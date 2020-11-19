@@ -7,30 +7,30 @@
 .DATA
 ;variables de la tabla de simbolos
 
-_0	db	0.0
-_02.5	db	02.5
-_1	db	1.0
-_100	db	100.0
-_2	db	2.0
-_3	db	3.0
-_4	db	4.0
-_5	db	5.0
-_6	db	6.0
-_7	db	7.0
-_85	db	85.0
-_9	db	9.0
+_0	dd	0.0
+_02_5	dd	02.5
+_1	dd	1.0
+_100	dd	100.0
+_2	dd	2.0
+_3	dd	3.0
+_4	dd	4.0
+_5	dd	5.0
+_6	dd	6.0
+_7	dd	7.0
+_85	dd	85.0
+_9	dd	9.0
 _@aux	dd	?
 _@max1	dd	?
 _@max2	dd	?
-_Ingrese un entero a actual: 	db	"Ingrese un entero a actual: " , '$' , 30 dup  (?)
-_La suma es: 	db	"La suma es: " , '$' , 14 dup  (?)
-_Prueba.txt LyC Tema 3!	db	"Prueba.txt LyC Tema 3!" , '$' , 24 dup  (?)
+_Ingreseunenteroaactual	db	"Ingrese un entero a actual: " , '$' , 30 dup  (?)
+_Lasumaes	db	"La suma es: " , '$' , 14 dup  (?)
+_Prueba_txtLyCTema3	db	"Prueba.txt LyC Tema 3!" , '$' , 24 dup  (?)
 _a	dd	?
 _actual	dd	?
-_actual es > 2 y != 0	db	"actual es > 2 y != 0" , '$' , 22 dup  (?)
+_actuales2y_0	db	"actual es > 2 y != 0" , '$' , 22 dup  (?)
 _b	dd	?
 _contador	dd	?
-_no es mayor que 2	db	"no es mayor que 2" , '$' , 19 dup  (?)
+_noesmayorque2	db	"no es mayor que 2" , '$' , 19 dup  (?)
 _nombre	dd	?
 _promedio	dd	?
 _suma	dd	?
@@ -48,91 +48,91 @@ MOV DS,EAX
 MOV ES,EAX
 
 
-FLD 85
-FSTP nombre
-mov dx, OFFSET _Prueba.txt LyC Tema 3!
+FLD _85
+FSTP _nombre
+mov dx, OFFSET _Prueba_txtLyCTema3
 mov ah, 9
 int 21h
 newline 1
-mov dx, OFFSET _Ingrese un entero a actual: 
+mov dx, OFFSET _Ingreseunenteroaactual
 mov ah, 9
 int 21h
 newline 1
-getFloat actual
-FLD 0
-FSTP contador
-FLD 02.5
-FLD nombre
+getFloat _actual
+FLD _0
+FSTP _contador
+FLD _02_5
+FLD _nombre
 FSUB
 FSTP _aux1
-FLD 3
+FLD _3
 FLD _aux1
 FADD
 FSTP _aux2
 FLD _aux2
-FSTP suma
+FSTP _suma
 _Etiq21:
-FLD 9
-FLD contador
+FLD _9
+FLD _contador
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq25
-FLD 1
-FLD contador
+FLD _1
+FLD _contador
 FADD
 FSTP _aux3
 FLD _aux3
-FSTP contador
+FSTP _contador
 JMP _Etiq21
 _Etiq25:
-mov dx, OFFSET _La suma es: 
+mov dx, OFFSET _Lasumaes
 mov ah, 9
 int 21h
 newline 1
-mov dx, OFFSET suma
+mov dx, OFFSET _suma
 mov ah, 9
 int 21h
 newline 1
-FLD 2
-FLD actual
+FLD _2
+FLD _actual
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq41
-FLD 0
-FLD actual
+FLD _0
+FLD _actual
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq46
-mov dx, OFFSET _actual es > 2 y != 0
+mov dx, OFFSET _actuales2y_0
 mov ah, 9
 int 21h
 newline 1
-FLD 2
-FSTP suma
+FLD _2
+FSTP _suma
 _Etiq46:
-FLD 5
-FSTP promedio
-FLD nombre
-FLD actual
+FLD _5
+FSTP _promedio
+FLD _nombre
+FLD _actual
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq59
-mov dx, OFFSET _no es mayor que 2
+mov dx, OFFSET _noesmayorque2
 mov ah, 9
 int 21h
 newline 1
 _Etiq59:
-FLD b
-FLD a
+FLD _b
+FLD _a
 FADD
 FSTP _aux4
 FLD _aux4
 FSTP @max1
-FLD 5
+FLD _5
 FSTP @aux
 FLD @aux
 FLD @max1
@@ -143,9 +143,9 @@ JNA _Etiq74
 FLD @aux
 FSTP @max1
 _Etiq74:
-FLD 4
+FLD _4
 FSTP @max2
-FLD 6
+FLD _6
 FSTP @aux
 FLD @aux
 FLD @max2
@@ -168,36 +168,36 @@ FLD @aux
 FSTP @max1
 _Etiq99:
 FLD @max1
-FSTP contador
-FLD 2
-FLD actual
+FSTP _contador
+FLD _2
+FLD _actual
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq110
-FLD 5
-FLD actual
+FLD _5
+FLD _actual
 FCOM
 FSTFSW AX
 SAHF
 JNA _Etiq115
-mov dx, OFFSET _actual es > 2 y != 0
+mov dx, OFFSET _actuales2y_0
 mov ah, 9
 int 21h
 newline 1
-FLD 2
-FLD 5
+FLD _2
+FLD _5
 FMUL 
 FSTP _aux5
 FLD _aux5
-FSTP suma
+FSTP _suma
 _Etiq115:
-FLD 100
-FLD 7
+FLD _100
+FLD _7
 FDIV 
 FSTP _aux6
 FLD _aux6
-FSTP promedio
+FSTP _promedio
 MOV EAX, 4c00h  ; termina la ejecucion
 INT 21h
 END start;

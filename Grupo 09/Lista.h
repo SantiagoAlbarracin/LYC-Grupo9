@@ -7,7 +7,7 @@ typedef struct l_nodo
 {
     struct l_nodo* sig;
     int nroPolaca;
-    char elemento[32];
+    char elemento[200];
 
 }l_nodo;
 typedef l_nodo* t_lista;

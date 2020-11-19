@@ -228,9 +228,10 @@ asignacion: ID_T OP_AS expresion SEP_LINEA {
 												
 												enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
-												enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++;
+												char auxString[40];
+      											insertar2($1, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString);
+												enlistar(&polacaLista, auxString, posicionPolaca); posicionPolaca++;
 												printf("ES ASIGNACION: ID_T OP_AS EXPRESION \n"); 
-												insertar($1, SIN_VALOR , &tablaSimbolos,NO_ES_CONSTANTE, "-");
 											
 
 										
@@ -239,10 +240,11 @@ asignacion: ID_T OP_AS expresion SEP_LINEA {
 
             |CONST_T  ID_T OP_AS expresion SEP_LINEA {  enlistar(&polacaLista, ":", posicionPolaca); 
             											posicionPolaca++;
-         											  	enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++;
+            											char auxString[40];
+      													insertar2($2, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString);
+         											  	enlistar(&polacaLista, auxString, posicionPolaca); posicionPolaca++;
             											printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
-            											insertar($2, SIN_VALOR , &tablaSimbolos,ES_CONSTANTE, "-");
-														
+            											
 													
 													}
             ;
@@ -257,9 +259,10 @@ imprimir:   TOKEN_PUT { enlistar(&polacaLista, "PUT", posicionPolaca); posicionP
 
 
 leer:   GET_T ID_T  SEP_LINEA{	enlistar(&polacaLista, "GET", posicionPolaca); posicionPolaca++;
-								enlistar(&polacaLista, $2, posicionPolaca); posicionPolaca++; 
+								char auxString[40];
+      							insertar2($2, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString); 
+								enlistar(&polacaLista, auxString, posicionPolaca); posicionPolaca++; 
 								printf("ES LEER: GET_T ID_T \n"); 
-								insertar($2, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); 
 								
 								
 							}
@@ -501,11 +504,12 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
       										}
 
 
-      |ID_T { 	
-				enlistar(&polacaLista, $1, posicionPolaca); 
+      |ID_T { 	char auxString[40];
+      			insertar2($1, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString); 
+
+				enlistar(&polacaLista, auxString, posicionPolaca); 
 				posicionPolaca++;  
-				printf("ES ELEMENTO: ID_T  %s\n",$1); 
-      			insertar($1, SIN_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-"); 
+				printf("ES ELEMENTO: ID_T \n"); 
 						
 				
 				bandRecienCerreMax = 0;
@@ -514,10 +518,10 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 			
 
 
-      |CONST_INT { 
-					enlistar(&polacaLista, $1, posicionPolaca); 
+      |CONST_INT { 	char auxString[40];
+      				insertar2($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString); 
+					enlistar(&polacaLista, auxString, posicionPolaca); 
 					posicionPolaca++; 
-					insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  
 					printf("ES ELEMENTO: CONST INT \n");
 				
 					
@@ -529,13 +533,12 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 				}
 
 
-      |CONST_FLOAT { enlistar(&polacaLista, $1, posicionPolaca); posicionPolaca++; insertar($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-");  printf("ES ELEMENTO: CONST FLOAT \n");
-	  
-														
-						
-						bandRecienCerreMax = 0;
-						
-														
+      |CONST_FLOAT { 	char auxString[40];
+						insertar2($1, CON_VALOR, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString); 
+						enlistar(&polacaLista, auxString, posicionPolaca);  
+						posicionPolaca++;
+      					printf("ES ELEMENTO: CONST FLOAT  %s   %s\n",$1, auxString);
+						bandRecienCerreMax = 0;							
 					}
 
 
@@ -543,7 +546,7 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
       |CONST_STRING { char auxString[40];
       					insertar2($1, ES_STRING, &tablaSimbolos,NO_ES_CONSTANTE,"-", auxString); 
       					enlistar(&polacaLista, auxString, posicionPolaca); posicionPolaca++; ;   		
-      					printf("ES ELEMENTO: CONST STRING \n");
+      					printf("ES ELEMENTO: CONST STRING TIENE %s \n", auxString);
 															
 						
 						bandRecienCerreMax = 0;						

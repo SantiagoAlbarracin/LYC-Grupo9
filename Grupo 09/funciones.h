@@ -94,9 +94,9 @@ int vaciar_lista_TS(tabla* l)
    			}
    			else{	
  				if(strchr(viejo->valor, '.') == NULL){
- 						fprintf(af,"%s\tdb\t%s.0\n",viejo->lexema, viejo->valor);
+ 						fprintf(af,"%s\tdd\t%s.0\n",viejo->lexema, viejo->valor);
  				}else{
- 						fprintf(af,"%s\tdb\t%s\n",viejo->lexema, viejo->valor);
+ 						fprintf(af,"%s\tdd\t%s\n",viejo->lexema, viejo->valor);
  				}
 
    			}
@@ -131,6 +131,7 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 			}
 			strcpy(auxiliar, lexemaE);
 			eliminarCaracter(auxiliar, '"');
+			eliminarCaracter(auxiliar, ' ');
 			strcpy(nuevo->lexema, "_");
 			strcat(nuevo->lexema, auxiliar);
 			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
@@ -158,7 +159,7 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 		strcpy(nuevo->longitud, "-");
 
 		strcat(nuevo->lexema, lexemaE);
-
+		nuevo->lexema = str_replace(".", "_", nuevo->lexema);
 		
 		nuevo->valor = NULL;
 		if(constante != ES_CONSTANTE)
@@ -182,6 +183,7 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 			}
 
 			strcpy(nuevo->valor, lexemaE);
+
 		}
 
 	}
@@ -240,6 +242,24 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 			eliminarCaracter(auxiliar, '"');
 			strcpy(nuevo->lexema, "_");
 			strcat(nuevo->lexema, auxiliar);
+			eliminarCaracter(nuevo->lexema, ' ');
+			if(strchr(nuevo->lexema, '0') != NULL){
+				nuevo->lexema = str_replace("0", "_0", nuevo->lexema);
+			}
+			nuevo->lexema = str_replace(".", "_", nuevo->lexema);
+			nuevo->lexema = str_replace("!", "", nuevo->lexema);
+			nuevo->lexema = str_replace(":", "", nuevo->lexema);
+			nuevo->lexema = str_replace("<", "", nuevo->lexema);
+			nuevo->lexema = str_replace("<=", "", nuevo->lexema);
+			nuevo->lexema = str_replace(">", "", nuevo->lexema);
+			nuevo->lexema = str_replace(">=", "", nuevo->lexema);
+			nuevo->lexema = str_replace("==", "", nuevo->lexema);
+			nuevo->lexema = str_replace("<>", "", nuevo->lexema);
+			nuevo->lexema = str_replace("=", "", nuevo->lexema);
+			nuevo->lexema = str_replace("?", "", nuevo->lexema);
+
+
+
 			strcpy(retorno, nuevo->lexema);
 
 			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
@@ -267,6 +287,7 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 		strcpy(nuevo->longitud, "-");
 
 		strcat(nuevo->lexema, lexemaE);
+		nuevo->lexema = str_replace(".", "_", nuevo->lexema);
 
 		
 		nuevo->valor = NULL;
@@ -281,16 +302,16 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 		if(valor == CON_VALOR){
 
 			nuevo->valor = (char*) malloc(sizeof(char) * strlen(lexemaE) + 1);
-
-			if(!(nuevo->valor)){
+				if(!(nuevo->valor)){
 				printf("Error, no hay memoria\n.");
 				return -1;
 			}
 			if(constante == ES_CONSTANTE){
 				strcpy(nuevo->constante,"SI");
 			}
-
+			strcpy(retorno, nuevo->lexema);
 			strcpy(nuevo->valor, lexemaE);
+
 		}
 
 	}
@@ -300,6 +321,7 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 				printf("Error, no hay memoria\n.");
 				return -1;
 		}
+		strcpy(retorno, nuevo->lexema);
 		strcpy(nuevo->valor, "-");
 
 	}
