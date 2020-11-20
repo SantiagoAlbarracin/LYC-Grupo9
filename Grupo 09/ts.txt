@@ -1,28 +1,28 @@
 LEXEMA				VALOR				CONSTANTE			LONGITUD			TIPO
-_0				0				NO			-			-
-_02_5				02.5				NO			-			-
-_1				1				NO			-			-
-_100				100				NO			-			-
-_2				2				NO			-			-
-_3				3				NO			-			-
-_4				4				NO			-			-
-_5				5				NO			-			-
-_6				6				NO			-			-
-_7				7				NO			-			-
-_85				85				NO			-			-
-_9				9				NO			-			-
+_02_5_esddfloat				02.5				NO			-			-
+_1_esddfloat				1				NO			-			-
+_20_esddfloat				20				NO			-			-
+_2_esddfloat				2				NO			-			-
+_3_esddfloat				3				NO			-			-
+_4_esddfloat				4				NO			-			-
+_5_esddfloat				5				NO			-			-
+_6_esddfloat				6				NO			-			-
+_85_esddfloat				85				NO			-			-
 _@aux				-				NO			-			Integer
-_@max1				-				NO			-			Integer
-_@max2				-				NO			-			Integer
-_Ingreseunenteroaactual				"Ingrese un entero a actual: "				NO			30			-
-_Lasumaes				"La suma es: "				NO			14			-
-_Prueba_txtLyCTema3				"Prueba.txt LyC Tema 3!"				NO			24			-
-_a				-				NO			-			-
-_actual				-				NO			-			Float
-_actuales2y_0				"actual es > 2 y != 0"				NO			22			-
-_b				-				NO			-			-
-_contador				-				NO			-			Integer
-_noesmayorque2				"no es mayor que 2"				NO			19			-
-_nombre				-				NO			-			-
-_promedio				-				NO			-			Float
-_suma				-				NO			-			Float
+__@max1				-				NO			-			Integer
+__@max2				-				NO			-			Integer
+_actual_esddfloat				-				NO			-			Float
+_actualtiene				"actual tiene: "				NO			16			-
+_ahoraactualtiene				"ahora actual tiene:"				NO			21			-
+_aux_esddfloat				-				NO			-			Float
+_contador_esddfloat				-				NO			-			Integer
+_contadortiene				"contador tiene: "				NO			18			-
+_entrealwhile				"entre al while"				NO			16			-
+_ingreseunenteroaactual				"ingrese un entero a actual: "				NO			30			-
+_nombre_esddfloat				-				NO			-			-
+_nombretiene				"nombre tiene: "				NO			16			-
+_promedio_esddfloat				-				NO			-			Float
+_prueba_txtlyctema3				"prueba.txt lyc tema 3!"				NO			24			-
+_suma_esddfloat				-				NO			-			Float
+_sumaesmenora2				"suma es menor a 2"				NO			19			-
+_sumatiene				"suma tiene: "				NO			14			-

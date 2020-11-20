@@ -51,6 +51,9 @@ int insertar2(char* , int ,tabla*  , int , char* , char* );
 
 char* str_replace(char* , char* , char* );
 
+void invertirSimbolo2(char* );
+
+
 //////////////////////////////////////////////////////////////////
 
 
@@ -66,6 +69,8 @@ int vaciar_lista_TS(tabla* l)
 {
     tuplaTabla* viejo;
     char varAux[20];
+    int bandera_0 = 0;
+    int bandera_1 = 0;
     FILE* pf = fopen("ts.txt","w+");
     if(!pf){
     	printf("No se pudo abrir el archivo;\n");
@@ -84,6 +89,12 @@ int vaciar_lista_TS(tabla* l)
     {
         viejo=*l;
         *l=viejo->siguiente;
+        if(strcmp(viejo->valor, "0") == 0 || strcmp(viejo->valor, "0.0") == 0){
+        	bandera_0 = 1;
+        }
+        if(strcmp(viejo->valor, "1") == 0 || strcmp(viejo->valor, "1.0") == 0){
+        	bandera_1 = 1;
+        }
         fprintf(pf,"%s\t\t\t\t%s\t\t\t\t%s\t\t\t%s\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante, viejo->longitud, viejo->tipo);
 
    		if(strchr(viejo->valor, '"') != NULL){
@@ -91,13 +102,13 @@ int vaciar_lista_TS(tabla* l)
 
    		}else{
    			if(strchr(viejo->valor, '-') != NULL){
-   					fprintf(af,"%s\tdd\t?\n", viejo->lexema);
+   					fprintf(af,"%s\tdd\t?\t;esddfloat\n", viejo->lexema);
    			}
    			else{	
  				if(strchr(viejo->valor, '.') == NULL){
- 						fprintf(af,"%s\tdd\t%s.0\n",viejo->lexema, viejo->valor);
+ 						fprintf(af,"%s\tdd\t%s.0\t;esddfloat\n",viejo->lexema, viejo->valor);
  				}else{
- 						fprintf(af,"%s\tdd\t%s\n",viejo->lexema, viejo->valor);
+ 						fprintf(af,"%s\tdd\t%s\t;esddfloat\n",viejo->lexema, viejo->valor);
  				}
 
    			}
@@ -106,8 +117,24 @@ int vaciar_lista_TS(tabla* l)
 
         free(viejo);
     }
+    if(!bandera_1){
+    	fprintf(af,"_1_esddfloat\tdd\t1.0\t;esddfloat\n");
+    }
+    if(!bandera_0){
+    	fprintf(af,"_0_esddfloat\tdd\t0.0\t;esddfloat\n");
+    }
     strcpy(varAux, "_varaux");
-    fprintf(af,"%s\tdd\t?\n", varAux);
+    fprintf(af,"_@max1\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max2\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max3\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max4\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max5\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max6\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max7\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max8\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max9\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@max10\tdd\t?\t;esddfloat\n");
+    fprintf(af,"%s\tdd\t?\t;esddfloat\n", varAux);
 
     fclose(pf);
     fclose(af);
@@ -280,7 +307,7 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 			strcpy(nuevo->valor, lexemaE);
 			itoa(strlen(lexemaE), nuevo->longitud, 10);
 	}else{/* SI NO ES UN STRING VERIFICO SI ES CON VALOR O SIN VALOR. PARA AMBOS CASOS ASIGNO EL NOMBRE AL LEXEMA Y RESERVO LA MEMORIA*/
-		nuevo->lexema = (char*) malloc(sizeof(char) * strlen(lexemaE) + 2);
+		nuevo->lexema = (char*) malloc(sizeof(char) * strlen(lexemaE) + 25);
 
 		if(!(nuevo->lexema)){
 			printf("Error, no hay memoria\n.");
@@ -291,6 +318,9 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 		strcpy(nuevo->longitud, "-");
 
 		strcat(nuevo->lexema, lexemaE);
+		strcat(nuevo->lexema, "_esddfloat");
+
+
 		nuevo->lexema = str_replace(".", "_", nuevo->lexema);
 
 		
@@ -315,6 +345,7 @@ int insertar2(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, cha
 			}
 			strcpy(retorno, nuevo->lexema);
 			strcpy(nuevo->valor, lexemaE);
+
 
 		}
 
@@ -408,6 +439,9 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 	char* prueba;
 	int nroPos = 1;
 	int i = 1;
+	int bandAND = 0;
+	int bandOR = 0;
+	int cierraComp = 0;
 
 	t_pila pila;
 	t_pila salto;
@@ -442,8 +476,8 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 		return 0;
 	}
 
-	fprintf(af,".include macros2.asm\n");
-	fprintf(af,".include number.asm\n");
+	fprintf(af,"include macros2.asm\n");
+	fprintf(af,"include number.asm\n");
 	fprintf(af,".MODEL LARGE\n.386\n.STACK 200h\n\n");
 
 	fprintf(af,".DATA\n;variables de la tabla de simbolos\n\n");
@@ -478,7 +512,10 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 			fgets(cadena1, 200, pf);
 			nroPos++;
 		}
-
+		if(strstr(cadena1, "_TOKENOR_") != NULL || strstr(cadena1, "_TOKENAND_") != NULL ){
+			bandAND++;
+			bandOR++;
+		}
 
 		if(esOperadorBinario(cadena1)){
 			if(strcmp(cadena1, "+") == 0){
@@ -486,11 +523,16 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				desapilar(&pila, aux2);
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
-        		fprintf(af,"%s\n",aux);
         		desapilar(&pila, aux2);
-				strcpy(aux, "FLD ");
-				strcat(aux, aux2);
+
+				strcpy(aux3, "FLD ");
+				strcat(aux3, aux2);
+				if(strcmp(aux, aux3) == 0){
+								strcpy(aux3, "FLD ");
+								strcat(aux3, "_0_esddfloat");
+				}
 				fprintf(af,"%s\n",aux);
+				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FADD\n");
 				fprintf(af, "FSTP %s\n",varAux);
 				apilar(&pila, varAux);
@@ -504,6 +546,10 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
         		desapilar(&pila, aux2);
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
+				if(strcmp(aux, aux3) == 0){
+					strcpy(aux3, "FLD ");
+					strcat(aux3, "_0_esddfloat");
+				}
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FSUB\n");
@@ -519,6 +565,10 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
         		desapilar(&pila, aux2);
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
+				if(strcmp(aux, aux3) == 0){
+					strcpy(aux3, "FLD ");
+					strcat(aux3, "_1_esddfloat");
+				}
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FMUL \n");
@@ -534,6 +584,10 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
         		desapilar(&pila, aux2);
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
+				if(strcmp(aux, aux3) == 0){
+					strcpy(aux3, "FLD ");
+					strcat(aux3, "_1_esddfloat");
+				}
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FDIV \n");
@@ -569,21 +623,48 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
 				fprintf(af,"%s\n",aux);
-				if(strcmp(cadena1, "BLE") == 0){
+				if(strstr(aux, "_@max") != NULL && strstr(cadena1, "BLE") != NULL  ){
+
 					fprintf(af,"FXCH\n");
 				}
+				if(strstr(cadena1, "BGE") != NULL){
+					fprintf(af,"FXCH\n");
+
+				}
+			
+
 				fprintf(af,"FCOM\n");
-				fprintf(af,"FSTFSW AX\n");
+				fprintf(af,"FSTSW AX\n");
 				fprintf(af,"SAHF\n");
 				strcpy(aux, "_Etiq");
 				
-				strcat(aux, itoa(nroPos, aux2, 10));
-				apilar(&etiquetas, aux);
-				fgets(cadena1, 200, pf);   //LEO LA POSICION A LA QUE SALTO
-        		nroPos++;
+				if(bandAND){
+					desapilar(&etiquetas, cadena2);
+					fprintf(af,"JNA %s\n", cadena2);
+					apilar(&etiquetas, cadena2);
+					bandAND = 0;
+					cierraComp = 1;
+					fgets(cadena1, 200, pf);   //LEO LA POSICION A LA QUE SALTO
+					nroPos++;
+					apilarEntero(&salto, atoi(cadena1));
+					printf("ETIQ CADENA TIENE : %s\n", cadena1);
 
-				apilarEntero(&salto, atoi(cadena1));
-				fprintf(af,"JNA %s\n", aux);
+
+				}else{
+					strcpy(aux, "_Etiq");
+					strcat(aux, itoa(nroPos, aux2, 10));
+					apilar(&etiquetas, aux);
+					if(bandOR){
+						cierraComp = 1;
+					}
+					fgets(cadena1, 200, pf);   //LEO LA POSICION A LA QUE SALTO
+					nroPos++;
+					apilarEntero(&salto, atoi(cadena1));
+					printf("ETIQ CADENA TIENE : %s\n", cadena1);
+					fprintf(af,"JNA %s\n", aux);
+				}
+
+				
 
 
 			}
@@ -595,10 +676,15 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				fgets(cadena1, 200, pf);   //LEO DE LA POLACA LO QUE PRINTEO
         		nroPos++;
         	//	fprintf(af,"displayString %s",cadena1);  // solo sirve para cuando vienen strings.
-        		fprintf(af,"mov dx, OFFSET %s",cadena1);
-        		fprintf(af,"mov ah, 9\n"); // ESTA VA ?
-        		fprintf(af,"int 21h\n");
-        		fprintf(af,"newline 1\n");
+        		prueba = str_replace("\n", "", cadena1);
+        		strcpy(cadena1, prueba);
+        		if(strstr(cadena1, "_esddfloat") != NULL){
+        			fprintf(af,"DisplayFloat %s , 2\n",cadena1);
+        			fprintf(af,"newline 1\n");
+        		}else{
+        			fprintf(af,"displayString %s \n",cadena1);
+        			fprintf(af,"newline 1\n");
+        		}
 			}
 			if(strcmp(cadena1, "GET") == 0){
 				fgets(cadena1, 200, pf);   //LEO DE LA POLACA DONDE GUARDO
@@ -612,10 +698,14 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 		}
 
 		if( verTopeEntero(&salto) == nroPos ){
-			desapilar(&etiquetas, aux);
-			fprintf(af,"%s:\n", aux);
+			if(cierraComp != -1 ){
+				desapilar(&etiquetas, aux);
+				fprintf(af,"%s:\n", aux);
+				apilar(&etiquetas, aux);
+			}
 
 		}
+
 
 
 	}
@@ -704,4 +794,22 @@ char* str_replace(char* search, char* replace, char* subject) {
 	free(foundBuffer);
 	
 	return ret;
+}
+
+
+void invertirSimbolo2(char* aux){
+    
+    if(strcmp(aux, "BEQ") == 0){
+        strcpy(aux, "BNE");
+    }else if(strcmp(aux, "BNE") == 0){
+        strcpy(aux, "BEQ");
+    } else if(strcmp(aux, "BLT") == 0){
+        strcpy(aux, "BGE");
+    }else  if(strcmp(aux, "BLE") == 0){
+        strcpy(aux, "BGT");
+    }else   if(strcmp(aux, "BGT") == 0){
+        strcpy(aux, "BLE");
+    }else{
+        strcpy(aux, "BLT");
+    }
 }

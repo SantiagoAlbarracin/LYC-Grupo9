@@ -1,5 +1,5 @@
-.include macros2.asm
-.include number.asm
+include macros2.asm
+include number.asm
 .MODEL LARGE
 .386
 .STACK 200h
@@ -7,34 +7,45 @@
 .DATA
 ;variables de la tabla de simbolos
 
-_0	dd	0.0
-_02_5	dd	02.5
-_1	dd	1.0
-_100	dd	100.0
-_2	dd	2.0
-_3	dd	3.0
-_4	dd	4.0
-_5	dd	5.0
-_6	dd	6.0
-_7	dd	7.0
-_85	dd	85.0
-_9	dd	9.0
-_@aux	dd	?
-_@max1	dd	?
-_@max2	dd	?
-_Ingreseunenteroaactual	db	"Ingrese un entero a actual: " , '$' , 30 dup  (?)
-_Lasumaes	db	"La suma es: " , '$' , 14 dup  (?)
-_Prueba_txtLyCTema3	db	"Prueba.txt LyC Tema 3!" , '$' , 24 dup  (?)
-_a	dd	?
-_actual	dd	?
-_actuales2y_0	db	"actual es > 2 y != 0" , '$' , 22 dup  (?)
-_b	dd	?
-_contador	dd	?
-_noesmayorque2	db	"no es mayor que 2" , '$' , 19 dup  (?)
-_nombre	dd	?
-_promedio	dd	?
-_suma	dd	?
-_varaux	dd	?
+_02_5_esddfloat	dd	02.5	;esddfloat
+_1_esddfloat	dd	1.0	;esddfloat
+_20_esddfloat	dd	20.0	;esddfloat
+_2_esddfloat	dd	2.0	;esddfloat
+_3_esddfloat	dd	3.0	;esddfloat
+_4_esddfloat	dd	4.0	;esddfloat
+_5_esddfloat	dd	5.0	;esddfloat
+_6_esddfloat	dd	6.0	;esddfloat
+_85_esddfloat	dd	85.0	;esddfloat
+_@aux	dd	?	;esddfloat
+__@max1	dd	?	;esddfloat
+__@max2	dd	?	;esddfloat
+_actual_esddfloat	dd	?	;esddfloat
+_actualtiene	db	"actual tiene: " , '$' , 16 dup  (?)
+_ahoraactualtiene	db	"ahora actual tiene:" , '$' , 21 dup  (?)
+_aux_esddfloat	dd	?	;esddfloat
+_contador_esddfloat	dd	?	;esddfloat
+_contadortiene	db	"contador tiene: " , '$' , 18 dup  (?)
+_entrealwhile	db	"entre al while" , '$' , 16 dup  (?)
+_ingreseunenteroaactual	db	"ingrese un entero a actual: " , '$' , 30 dup  (?)
+_nombre_esddfloat	dd	?	;esddfloat
+_nombretiene	db	"nombre tiene: " , '$' , 16 dup  (?)
+_promedio_esddfloat	dd	?	;esddfloat
+_prueba_txtlyctema3	db	"prueba.txt lyc tema 3!" , '$' , 24 dup  (?)
+_suma_esddfloat	dd	?	;esddfloat
+_sumaesmenora2	db	"suma es menor a 2" , '$' , 19 dup  (?)
+_sumatiene	db	"suma tiene: " , '$' , 14 dup  (?)
+_0_esddfloat	dd	0.0	;esddfloat
+_@max1	dd	?	;esddfloat
+_@max2	dd	?	;esddfloat
+_@max3	dd	?	;esddfloat
+_@max4	dd	?	;esddfloat
+_@max5	dd	?	;esddfloat
+_@max6	dd	?	;esddfloat
+_@max7	dd	?	;esddfloat
+_@max8	dd	?	;esddfloat
+_@max9	dd	?	;esddfloat
+_@max10	dd	?	;esddfloat
+_varaux	dd	?	;esddfloat
 
 
 
@@ -49,156 +60,149 @@ MOV DS,EAX
 MOV ES,EAX
 
 
-FLD _85
-FSTP _nombre
-mov dx, OFFSET _Prueba_txtLyCTema3
-mov ah, 9
-int 21h
+FLD _85_esddfloat
+FSTP _nombre_esddfloat
+displayString _prueba_txtlyctema3 
 newline 1
-mov dx, OFFSET _Ingreseunenteroaactual
-mov ah, 9
-int 21h
+displayString _ingreseunenteroaactual 
 newline 1
-getFloat _actual
-FLD _0
-FSTP _contador
-FLD _02_5
-FLD _nombre
+getFloat _actual_esddfloat
+displayString _actualtiene 
+newline 1
+DisplayFloat _actual_esddfloat , 2
+newline 1
+FLD _1_esddfloat
+FSTP _contador_esddfloat
+FLD _02_5_esddfloat
+FSTP _nombre_esddfloat
+displayString _nombretiene 
+newline 1
+DisplayFloat _nombre_esddfloat , 2
+newline 1
+FLD _02_5_esddfloat
+FLD _nombre_esddfloat
 FSUB
 FSTP _varaux
-FLD _3
-FLD _varaux
-FADD
-FSTP _varaux
-FLD _varaux
-FSTP _suma
-_Etiq21:
-FLD _9
-FLD _contador
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq25
-FLD _1
-FLD _contador
-FADD
-FSTP _varaux
-FLD _varaux
-FSTP _contador
-JMP _Etiq21
-_Etiq25:
-mov dx, OFFSET _Lasumaes
-mov ah, 9
-int 21h
-newline 1
-mov dx, OFFSET _suma
-mov ah, 9
-int 21h
-newline 1
-FLD _2
-FLD _actual
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq41
-FLD _0
-FLD _actual
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq46
-mov dx, OFFSET _actuales2y_0
-mov ah, 9
-int 21h
-newline 1
-FLD _2
-FSTP _suma
-_Etiq46:
-FLD _5
-FSTP _promedio
-FLD _nombre
-FLD _actual
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq59
-mov dx, OFFSET _noesmayorque2
-mov ah, 9
-int 21h
-newline 1
-_Etiq59:
-FLD _b
-FLD _a
-FADD
-FSTP _varaux
-FLD _varaux
-FSTP @max1
-FLD _5
-FSTP @aux
-FLD @aux
-FLD @max1
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq74
-FLD @aux
-FSTP @max1
-_Etiq74:
-FLD _4
-FSTP @max2
-FLD _6
-FSTP @aux
-FLD @aux
-FLD @max2
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq88
-FLD @aux
-FSTP @max2
-_Etiq88:
-FLD @max2
-FSTP @aux
-FLD @aux
-FLD @max1
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq99
-FLD @aux
-FSTP @max1
-_Etiq99:
-FLD @max1
-FSTP _contador
-FLD _2
-FLD _actual
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq110
-FLD _5
-FLD _actual
-FCOM
-FSTFSW AX
-SAHF
-JNA _Etiq115
-mov dx, OFFSET _actuales2y_0
-mov ah, 9
-int 21h
-newline 1
-FLD _2
-FLD _5
-FMUL 
-FSTP _varaux
-FLD _varaux
-FSTP _suma
-_Etiq115:
-FLD _100
-FLD _7
+FLD _20_esddfloat
+FLD _2_esddfloat
 FDIV 
 FSTP _varaux
 FLD _varaux
-FSTP _promedio
+FLD _0_esddfloat
+FADD
+FSTP _varaux
+FLD _varaux
+FSTP _suma_esddfloat
+displayString _contadortiene 
+newline 1
+DisplayFloat _contador_esddfloat , 2
+newline 1
+displayString _sumatiene 
+newline 1
+DisplayFloat _suma_esddfloat , 2
+newline 1
+FLD _5_esddfloat
+FSTP _@max1
+FLD _2_esddfloat
+FSTP _@max2
+FLD _6_esddfloat
+FSTP _@aux
+FLD _@aux
+FLD _@max2
+FXCH
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq54
+FLD _@aux
+FSTP _@max2
+_Etiq54:
+FLD _@max2
+FSTP _@aux
+FLD _@aux
+FLD _@max1
+FXCH
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq65
+FLD _@aux
+FSTP _@max1
+_Etiq65:
+FLD _@max1
+FSTP _@aux
+FLD _@aux
+FLD _@max1
+FXCH
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq76
+FLD _@aux
+FSTP _@max1
+_Etiq76:
+FLD _3_esddfloat
+FSTP _@aux
+FLD _@aux
+FLD _@max1
+FXCH
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq87
+FLD _@aux
+FSTP _@max1
+_Etiq87:
+FLD _@max1
+FSTP _actual_esddfloat
+displayString _ahoraactualtiene 
+newline 1
+DisplayFloat _actual_esddfloat , 2
+newline 1
+FLD _2_esddfloat
+FSTP _aux_esddfloat
+_Etiq102:
+FLD _3_esddfloat
+FLD _suma_esddfloat
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq106
+FLD _4_esddfloat
+FLD _aux_esddfloat
+FXCH
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq106
+displayString _entrealwhile 
+newline 1
+FLD _suma_esddfloat
+FLD _1_esddfloat
+FSUB
+FSTP _varaux
+FLD _varaux
+FSTP _suma_esddfloat
+FLD _1_esddfloat
+FLD _aux_esddfloat
+FADD
+FSTP _varaux
+FLD _varaux
+FSTP _aux_esddfloat
+JMP _Etiq102
+_Etiq106:
+FLD _2_esddfloat
+FSTP _suma_esddfloat
+FLD _2_esddfloat
+FLD _suma_esddfloat
+FXCH
+FCOM
+FSTSW AX
+SAHF
+JNA _Etiq134
+displayString _sumaesmenora2 
+newline 1
+_Etiq134:
 MOV EAX, 4c00h  ; termina la ejecucion
 INT 21h
 END start;

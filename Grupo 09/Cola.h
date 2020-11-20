@@ -6,7 +6,7 @@
 typedef struct s_nodo
 {
     struct s_nodo* sig;
-    char dato[20];
+    char dato[200];
 }t_nodo;
 ////////////////////////
 typedef struct
