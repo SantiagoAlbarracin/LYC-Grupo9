@@ -14,4 +14,7 @@ del y.tab.c
 del y.tab.h
 del auxiliar.txt
 del data.txt
+del intermedia.txt
+del ts.txt
+del y.output
 pause

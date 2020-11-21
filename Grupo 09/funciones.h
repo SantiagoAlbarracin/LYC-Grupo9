@@ -19,6 +19,8 @@ typedef struct tupla{
 	char* tipo;
 	char constante[3];
 	char longitud[30];
+	char constValor[200];
+	char lex[200];
 	struct tupla* siguiente;
 
 }tuplaTabla;
@@ -55,6 +57,10 @@ void invertirSimbolo2(char* );
 
 void invertirCondicion(char* );
 
+int enlistar_en_ordenValor(tabla* l,tuplaTabla* d);
+
+int esta_en_Lista(tabla* l,char* d);
+
 //////////////////////////////////////////////////////////////////
 
 
@@ -72,6 +78,7 @@ int vaciar_lista_TS(tabla* l)
     char varAux[20];
     int bandera_0 = 0;
     int bandera_1 = 0;
+    int bandConstante = 0;
     FILE* pf = fopen("ts.txt","w+");
     if(!pf){
     	printf("No se pudo abrir el archivo;\n");
@@ -96,6 +103,9 @@ int vaciar_lista_TS(tabla* l)
         if(strcmp(viejo->valor, "1") == 0 || strcmp(viejo->valor, "1.0") == 0){
         	bandera_1 = 1;
         }
+        if(strstr(viejo->constante, "SI") != NULL){
+        	bandConstante = 1;
+        }
         fprintf(pf,"%s\t\t\t\t%s\t\t\t\t%s\t\t\t%s\t\t\t%s\n", viejo->lexema, viejo->valor, viejo->constante, viejo->longitud, viejo->tipo);
 
    		if(strchr(viejo->valor, '"') != NULL){
@@ -103,13 +113,28 @@ int vaciar_lista_TS(tabla* l)
 
    		}else{
    			if(strchr(viejo->valor, '-') != NULL){
+   				if(bandConstante){
    					fprintf(af,"%s\tdd\t?\t;esddfloat\n", viejo->lexema);
+   					bandConstante = 0;
+   				}else{
+   					fprintf(af,"%s\tdd\t?\t;esddfloat\n", viejo->lexema);
+   				}
    			}
    			else{	
  				if(strchr(viejo->valor, '.') == NULL){
+ 					if(bandConstante){
  						fprintf(af,"%s\tdd\t%s.0\t;esddfloat\n",viejo->lexema, viejo->valor);
+ 						bandConstante = 0;
+ 					}else{
+ 						fprintf(af,"%s\tdd\t%s.0\t;esddfloat\n",viejo->lexema, viejo->valor);
+ 					}
  				}else{
+ 					if(bandConstante){
  						fprintf(af,"%s\tdd\t%s\t;esddfloat\n",viejo->lexema, viejo->valor);
+ 						bandConstante = 0;
+ 					}else{
+ 						fprintf(af,"%s\tdd\t%s\t;esddfloat\n",viejo->lexema, viejo->valor);
+ 					}
  				}
 
    			}
@@ -135,6 +160,7 @@ int vaciar_lista_TS(tabla* l)
     fprintf(af,"_@max8\tdd\t?\t;esddfloat\n");
     fprintf(af,"_@max9\tdd\t?\t;esddfloat\n");
     fprintf(af,"_@max10\tdd\t?\t;esddfloat\n");
+    fprintf(af,"_@aux\tdd\t?\t;esddfloat\n");
     fprintf(af,"%s\tdd\t?\t;esddfloat\n", varAux);
 
     fclose(pf);
@@ -419,6 +445,51 @@ int enlistar_en_orden(tabla* l,tuplaTabla* d)
     return 1;
 }
 
+
+int enlistar_en_ordenValor(tabla* l,tuplaTabla* d)
+{
+    tabla pm;
+    int resultado = 0;
+   while(*l && (resultado=strcmp((*l)->constValor,d->constValor))<=0)
+   {
+   		if(resultado == 0){
+   			return 0;
+   		}
+       	l=&(*l)->siguiente;
+   }
+   if(!*l)
+        {
+
+            d->siguiente=NULL;
+            *l=d;
+            return 1;
+        }
+    d->siguiente=*l;
+    *l=d;
+
+    return 1;
+}
+
+
+int esta_en_Lista(tabla* l,char* d)
+{
+    tabla pm;
+    int resultado = 0;
+   while(*l && (resultado=strcmp((*l)->constValor,d))<=0)
+   {
+   		if(resultado == 0){
+
+   			return 0;
+   		}
+       	l=&(*l)->siguiente;
+   }
+  
+    return 1;
+}
+
+
+
+
 int mi_strlen(char* cadena){
 
 	int i = 0;
@@ -470,7 +541,7 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
   	strcpy(varAux, "_varaux");
 
 
-	FILE *af = fopen("assembler.asm","w+");
+	FILE *af = fopen("Final.asm","w+");
 	if(!af){
 		printf("No se pudo abrir el archivo assembler.txt\n");
 		return 0;
@@ -529,8 +600,8 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 		
 		if(esOperadorBinario(cadena1)){
 			if(strcmp(cadena1, "+") == 0){
-				desapilar(&pila, aux2);
-				desapilar(&pila, aux2);
+				desapilar(&pila, aux2); // SACO EL +
+				desapilar(&pila, aux2); // SACO EL PRIMER OPERANDO
 				strcpy(aux, "FLD ");
 				strcat(aux, aux2);
         		desapilar(&pila, aux2);
@@ -541,6 +612,7 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 								strcpy(aux3, "FLD ");
 								strcat(aux3, "_0_esddfloat");
 				}
+
 				fprintf(af,"%s\n",aux);
 				fprintf(af,"%s\n",aux3);
 				fprintf(af,"FADD\n");
@@ -605,17 +677,23 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 				apilar(&pila, varAux);
 				i++;
 			}
+
 			if(strcmp(cadena1, ":") == 0){
-				desapilar(&pila, aux2);
-				desapilar(&pila, aux2);
-				strcpy(aux, "FLD ");
-				strcat(aux, aux2);
-        		fprintf(af,"%s\n",aux);
-        		fgets(cadena1, 200, pf);
+				desapilar(&pila, aux2); // desapilo el :
+				desapilar(&pila, aux2); // desapilo el valor a asignar
+				
+				fgets(cadena1, 200, pf); // leo valor al que le asigno
         		nroPos++;
-				strcpy(aux, "FSTP ");
-				strcat(aux, cadena1);
-				fprintf(af,"%s",aux);
+				
+					//printf("ESTOY EN ASIGNACION, AUX TIENE %s\n", aux2);
+					strcpy(aux, "FLD ");
+					strcat(aux, aux2);
+        			fprintf(af,"%s\n",aux);
+
+					strcpy(aux, "FSTP ");
+					strcat(aux, cadena1);
+					fprintf(af,"%s",aux);
+				
 			}
 			if(strcmp(cadena1, "CMP") == 0){  // DUDA CON ESTO PARA SABER COMO ASIGNAR SIMBOLOS EN COMPARACIONES
 				
@@ -642,6 +720,14 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 
 				fprintf(af,"FLD %s\n",primerOperando);
 				fprintf(af,"FLD %s\n",segundoOperando);
+
+				if(strstr(primerOperando, "_@max") != NULL || strstr(primerOperando, "_@aux") != NULL || 
+					strstr(segundoOperando, "_@max") != NULL || strstr(segundoOperando, "_@aux") != NULL){
+				
+
+						fprintf(af,"FXCH\n");
+					
+					}
 				fprintf(af,"FCOM\n");
 				fprintf(af,"FSTSW AX\n");
 				fprintf(af,"SAHF\n");
@@ -671,6 +757,7 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 
 					fprintf(af,"FLD %s",primerOperando);
 					fprintf(af,"FLD %s",segundoOperando);
+
 					fprintf(af,"FCOM\n");
 					fprintf(af,"FSTSW AX\n");
 					fprintf(af,"SAHF\n");
@@ -683,7 +770,7 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 
 					fprintf(af,"%s  %s",operador, segundoSalto); // AGREGO SEGUNDO SALTO		
 					fprintf(af,"%s:\n", primerSalto);
-					printf("%s\n",segundoSalto);
+					//printf("%s\n",segundoSalto);
 					apilar(&etiquetas, segundoSalto);
 					apilarEntero(&salto, atoi(posSalto));
 
@@ -765,6 +852,7 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 
 		}
 
+
 		if( verTopeEntero(&salto) == nroPos ){
 			if(cierraComp != -1 ){
 				desapilar(&etiquetas, aux);
@@ -776,11 +864,11 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 			}
 
 		}
-
-
-
 	}
 
+
+
+	
 	fprintf(af,"MOV EAX, 4c00h  ; termina la ejecucion\n");
 	fprintf(af,"INT 21h\n");
 	fprintf(af,"END start;\n;\n");
