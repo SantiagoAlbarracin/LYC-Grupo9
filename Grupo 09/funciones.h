@@ -53,6 +53,7 @@ char* str_replace(char* , char* , char* );
 
 void invertirSimbolo2(char* );
 
+void invertirCondicion(char* );
 
 //////////////////////////////////////////////////////////////////
 
@@ -192,6 +193,8 @@ int insertar(char* lexemaE, int valor,tabla*  tablaSimbolos, int constante, char
 		strcat(nuevo->lexema, lexemaE);
 		nuevo->lexema = str_replace(".", "_", nuevo->lexema);
 		
+
+
 		nuevo->valor = NULL;
 		if(constante != ES_CONSTANTE)
 				strcpy(nuevo->constante,"NO");
@@ -432,6 +435,12 @@ int mi_strlen(char* cadena){
 int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 	char cadena1[200];
 	char cadena2[200];
+	char posSalto[200];
+	char segundoOperando[200];
+	char primerOperando[200];
+	char operador[200];
+	char primerSalto[200];
+	char segundoSalto[200];
 	char aux[150];
 	char aux2[150];
 	char aux3[150];
@@ -439,9 +448,12 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 	char* prueba;
 	int nroPos = 1;
 	int i = 1;
+	int bandWhile = 0;
 	int bandAND = 0;
 	int bandOR = 0;
 	int cierraComp = 0;
+	int fSize = 0;
+	
 
 	t_pila pila;
 	t_pila salto;
@@ -504,6 +516,8 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 			strcat(aux, itoa(nroPos, aux2, 10));
 			apilar(&whileEtiq, aux);
 			fprintf(af,"%s:\n", aux);
+			bandWhile = 1;
+
 		}
 
 		if(strcmp(cadena1, "BI") == 0){
@@ -512,11 +526,7 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 			fgets(cadena1, 200, pf);
 			nroPos++;
 		}
-		if(strstr(cadena1, "_TOKENOR_") != NULL || strstr(cadena1, "_TOKENAND_") != NULL ){
-			bandAND++;
-			bandOR++;
-		}
-
+		
 		if(esOperadorBinario(cadena1)){
 			if(strcmp(cadena1, "+") == 0){
 				desapilar(&pila, aux2);
@@ -609,61 +619,119 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 			}
 			if(strcmp(cadena1, "CMP") == 0){  // DUDA CON ESTO PARA SABER COMO ASIGNAR SIMBOLOS EN COMPARACIONES
 				
-				fgets(cadena1, 200, pf);   //POR AHORA IGNORO. PUEDE VENIR BLE, BEQ, ETC...
-        		nroPos++;
-				desapilar(&pila, aux2); //DESAPILO CMP
-				desapilar(&pila, aux2);
-				strcpy(aux, "FLD ");
-				strcat(aux, aux2);
-        		fprintf(af,"%s\n",aux);
-        		
-        		
-        		
-				desapilar(&pila, aux2);
-				strcpy(aux, "FLD ");
-				strcat(aux, aux2);
-				fprintf(af,"%s\n",aux);
-				if(strstr(aux, "_@max") != NULL && strstr(cadena1, "BLE") != NULL  ){
+				fgets(operador, 200, pf); nroPos++;  // VIENE EL PRIMER BLE, BEQ, ETC...
+				fgets(posSalto, 200, pf); nroPos++;  // GUARDO POSICION DEL SALTO
 
-					fprintf(af,"FXCH\n");
-				}
-				if(strstr(cadena1, "BGE") != NULL){
-					fprintf(af,"FXCH\n");
 
-				}
-			
 
+				fSize = ftell(pf);
+				fgets(cadena2, 200, pf); //ME FIJO CON CADENA2 SI HAY CONDICION COMPUESTA
+				fseek(pf,  fSize, SEEK_SET);
+
+				equivalenteCondicion(operador); // PASO EL OPERADOR DE LA CONDICION A ASSEMBLER
+
+				//ASIGNO ETIQUETA AL PRIMER SALTO
+				strcpy(primerSalto, "_Etiq");
+				strcat(primerSalto, posSalto);
+
+				desapilar(&pila, primerOperando); // DESAPILO EL CMP
+				desapilar(&pila, primerOperando); // DESAPILO EL PRIMER OPERANDO
+				desapilar(&pila, segundoOperando); // DESAPILO EL SEGUNDO OPERANDO 
+
+				//ESCRIBO EN ARCHIVO ASSEMBLER LA PRIMER CONDICION
+
+				fprintf(af,"FLD %s\n",primerOperando);
+				fprintf(af,"FLD %s\n",segundoOperando);
 				fprintf(af,"FCOM\n");
 				fprintf(af,"FSTSW AX\n");
 				fprintf(af,"SAHF\n");
-				strcpy(aux, "_Etiq");
+
 				
-				if(bandAND){
-					desapilar(&etiquetas, cadena2);
-					fprintf(af,"JNA %s\n", cadena2);
-					apilar(&etiquetas, cadena2);
-					bandAND = 0;
-					cierraComp = 1;
-					fgets(cadena1, 200, pf);   //LEO LA POSICION A LA QUE SALTO
-					nroPos++;
-					apilarEntero(&salto, atoi(cadena1));
-					printf("ETIQ CADENA TIENE : %s\n", cadena1);
 
 
-				}else{
-					strcpy(aux, "_Etiq");
-					strcat(aux, itoa(nroPos, aux2, 10));
-					apilar(&etiquetas, aux);
-					if(bandOR){
-						cierraComp = 1;
+
+				if(strstr(cadena2, "_TOKENOR_") != NULL){
+
+					fprintf(af,"%s  %s",operador, primerSalto); // AGREGO PRIMER SALTO
+
+
+					fgets(cadena2, 200, pf); nroPos++; //SALTO EL _TOKENOR_
+
+					fgets(primerOperando, 200, pf);   nroPos++;// LEO EL PRIMER OPERANDO DE LA SEGUNDA CONDICION
+					fgets(segundoOperando, 200, pf);  nroPos++;// LEO EL SEGUNDO OPERANDO DE LA SEGUNDA CONDICION
+					fgets(operador, 200, pf);  nroPos++;// SALTO EL CMP
+					fgets(operador, 200, pf);  nroPos++;// LEO EL OPERADOR DE LA SEGUNDA CONDICION
+					fgets(posSalto, 200, pf);  nroPos++;// GUARDO POSICION DEL SALTO
+					
+
+					//ASIGNO ETIQUETA AL PRIMER SALTO
+					strcpy(segundoSalto, "_Etiq");
+					strcat(segundoSalto, posSalto);
+
+
+					fprintf(af,"FLD %s",primerOperando);
+					fprintf(af,"FLD %s",segundoOperando);
+					fprintf(af,"FCOM\n");
+					fprintf(af,"FSTSW AX\n");
+					fprintf(af,"SAHF\n");
+					equivalenteCondicion(operador);
+
+
+					//le borro el \n al primer salto
+					prueba = str_replace("\n", "", primerSalto);
+					strcpy(primerSalto, prueba);
+
+					fprintf(af,"%s  %s",operador, segundoSalto); // AGREGO SEGUNDO SALTO		
+					fprintf(af,"%s:\n", primerSalto);
+					printf("%s\n",segundoSalto);
+					apilar(&etiquetas, segundoSalto);
+					apilarEntero(&salto, atoi(posSalto));
+
+
+				}else{ if(strstr(cadena2, "_TOKENAND_") != NULL){
+
+					fprintf(af,"%s  %s",operador, primerSalto); // AGREGO PRIMER SALTO
+
+
+					fgets(cadena2, 200, pf);  nroPos++; //SALTEO EL _TOKENAND_
+
+					fgets(primerOperando, 200, pf);  nroPos++; // LEO EL PRIMER OPERANDO DE LA SEGUNDA CONDICION
+					fgets(segundoOperando, 200, pf); nroPos++; // LEO EL SEGUNDO OPERANDO DE LA SEGUNDA CONDICION
+					fgets(operador, 200, pf);  nroPos++;// SALTO EL CMP
+					fgets(operador, 200, pf);  nroPos++; // LEO EL OPERADOR DE LA SEGUNDA CONDICION
+					fgets(posSalto, 200, pf);  nroPos++;// GUARDO POSICION DEL SALTO
+
+					//ASIGNO ETIQUETA AL PRIMER SALTO
+
+					strcpy(segundoSalto, "_Etiq");
+					strcat(segundoSalto, posSalto);
+
+
+					fprintf(af,"FLD %s",primerOperando);
+					fprintf(af,"FLD %s",segundoOperando);
+					if(bandWhile != 1){
+						fprintf(af,"FXCH\n");
+					}else{
+						bandWhile = 0;
 					}
-					fgets(cadena1, 200, pf);   //LEO LA POSICION A LA QUE SALTO
-					nroPos++;
-					apilarEntero(&salto, atoi(cadena1));
-					printf("ETIQ CADENA TIENE : %s\n", cadena1);
-					fprintf(af,"JNA %s\n", aux);
-				}
+					fprintf(af,"FCOM\n");
+					fprintf(af,"FSTSW AX\n");
+					fprintf(af,"SAHF\n");
+					
+					equivalenteCondicion(operador);
+					fprintf(af,"%s  %s",operador, segundoSalto); // AGREGO SEGUNDO SALTO
 
+					//LE AGREGO DOS PUNTOS AL FINAL DE AL ETIQUETA PARA ALMACENAR.	
+					apilar(&etiquetas, segundoSalto);
+					apilarEntero(&salto, atoi(posSalto));
+	
+
+					}else{
+						fprintf(af,"%s  %s",operador, primerSalto); // AGREGO PRIMER SALTO
+						apilar(&etiquetas, primerSalto);
+						apilarEntero(&salto, atoi(posSalto));
+					}
+				}
 				
 
 
@@ -700,7 +768,10 @@ int generarAssembler(t_lista *polaca, t_lista* intermedia, int posPolaca){
 		if( verTopeEntero(&salto) == nroPos ){
 			if(cierraComp != -1 ){
 				desapilar(&etiquetas, aux);
-				fprintf(af,"%s:\n", aux);
+				prueba = str_replace("\n", ":", aux);
+				strcpy(aux, prueba);
+
+				fprintf(af,"%s\n", aux);
 				apilar(&etiquetas, aux);
 			}
 
@@ -799,17 +870,53 @@ char* str_replace(char* search, char* replace, char* subject) {
 
 void invertirSimbolo2(char* aux){
     
-    if(strcmp(aux, "BEQ") == 0){
+    if(strstr(aux, "BEQ") != NULL){
         strcpy(aux, "BNE");
-    }else if(strcmp(aux, "BNE") == 0){
+    }else if(strstr(aux, "BNE") != NULL){
         strcpy(aux, "BEQ");
-    } else if(strcmp(aux, "BLT") == 0){
+    } else if(strstr(aux, "BLT") != NULL){
         strcpy(aux, "BGE");
-    }else  if(strcmp(aux, "BLE") == 0){
+    }else  if(strstr(aux, "BLE") != NULL){
         strcpy(aux, "BGT");
-    }else   if(strcmp(aux, "BGT") == 0){
+    }else   if(strstr(aux, "BGT") != NULL){
         strcpy(aux, "BLE");
     }else{
         strcpy(aux, "BLT");
+    }
+}
+
+
+void equivalenteCondicion(char* aux){
+	if(strstr(aux, "BEQ") != NULL){
+		strcpy(aux, "JE");
+	}else if(strstr(aux, "BNE") != NULL){
+        strcpy(aux, "JNE");
+    } else if(strstr(aux, "BLT") != NULL){
+        strcpy(aux, "JB");
+    }else  if(strstr(aux, "BLE") != NULL){
+        strcpy(aux, "JNA");
+    }else   if(strstr(aux, "BGT") != NULL){
+        strcpy(aux, "JA");
+    }else{
+        strcpy(aux, "JAE");
+    }
+}
+
+
+
+
+void invertirCondicion(char* aux){
+	if(strstr(aux, "JNE") != NULL){
+		strcpy(aux, "JE");
+	}else if(strstr(aux, "JE") != NULL){
+        strcpy(aux, "JNE");
+    } else if(strstr(aux, "JNA") != NULL){
+        strcpy(aux, "JB");
+    }else  if(strstr(aux, "JB") != NULL){
+        strcpy(aux, "JNA");
+    }else   if(strstr(aux, "JAE") != NULL){
+        strcpy(aux, "JA");
+    }else{
+        strcpy(aux, "JAE");
     }
 }

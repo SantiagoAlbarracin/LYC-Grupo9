@@ -5,25 +5,43 @@ PUT "Ingrese un entero a actual: ";
 GET actual;
 PUT "Actual tiene: ";
 PUT actual;
-contador: 1;
-nombre: 02.5;
-PUT "Nombre tiene: ";
-PUT nombre;
-suma: 02.5-nombre+(20/2);
-PUT "Contador tiene: ";
-PUT contador;
-PUT "Suma tiene: ";
-PUT suma;
-actual: maximo(5,maximo(2,6),3);
-PUT "Ahora actual tiene:";
-PUT actual;
-aux : 2;
-while(suma > 3 AND aux < 4){
+suma:10 ;
+contador: 2;
+while(suma > 3 AND contador >= 4){
 	PUT "Entre al While";
 	suma: suma-1;
-	aux: aux + 1;
+	contador : contador + 1;
 }
-suma : 2;
-if(suma < 2){
-	PUT "SUMA ES MENOR A 2";
+PUT "Suma tiene: ";
+PUT suma;
+if(suma < 10 AND suma <= 8 ){
+	PUT "hola";
+}
+if(suma == 8 OR suma <> 4){
+	PUT "chau";
+}
+suma:8;
+if(suma  == 8 AND suma <> 4){
+	PUT "SUMA ES IGUAL A 8 Y <> A 4";
+}
+if(suma  <> 4){
+	PUT "SUMA ES DISTINTO DE  4";
+}
+
+if(suma > 4){
+	PUT "SUMA ES MAYOR A 4";
+}
+if(suma >= 4){
+	PUT "SUMA ES MAYOR IGUAL A 4";
+}
+suma:4;
+if(suma == 4){
+	PUT "SUMA ES IGUAL A 4";
+}
+suma:2;
+if(suma < 4){
+	PUT "SUMA ES MENOR A 4";
+}
+if(suma <= 4){
+	PUT "SUMA ES MENOR IGUAL A 4";
 }
