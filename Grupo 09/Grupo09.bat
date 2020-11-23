@@ -1,19 +1,19 @@
 @echo off
 
 cls
-echo Generando el numbers.obj
+echo Generando numbers.obj
 tasm numbers.asm
 pause
 cls
-echo Generando el Final.obj
+echo Generando Final.obj
 tasm Final.asm
 pause
 cls
-echo Linkeando..
+echo Linkeando los .obj ..
 tlink /3 Final.obj numbers.obj /v /s /m
 pause
 cls
-echo Ejecutando el exe
+echo Ejecutando Final.exe
 echo --------------------------------------
 Final.exe
 echo.
