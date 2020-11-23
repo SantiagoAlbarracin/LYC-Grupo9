@@ -172,14 +172,7 @@ iteracion:    WHILE_T { posicionPolacaWhile = posicionPolaca; enlistar(&polacaLi
 																												enlistar(&polacaLista, "BI", posicionPolaca); posicionPolaca++;
 																												enlistar(&polacaLista, itoa(posicionPolacaWhile+1, cadena, 10), posicionPolaca); posicionPolaca++;
 																												
-																												/* ============================= */
-																												/* ========= MARIANO =========== */
-																												/* ============================= */
 																												
-																												apilarPru("", "BI");
-																												apilarPru("", itoa(posicionPolacaWhile+1, cadena, 10));
-																												
-																												/* ============================= */
 																																																								
 																												posicionPolacaWhile = 0;	
 																													
@@ -224,21 +217,17 @@ argumento_sel:  LLAVE_A programa LLAVE_C  {  printf("ES ARGUMENTOS_SEL: PROGRAMA
 
 asignacion: ID_T OP_AS expresion SEP_LINEA { 	
 
-												/* ============================= */
-												/* ========= MARIANO =========== */
-												/* ============================= */
-												/*apilarPru("", "-----EEEE");	*/
+											
 												char pruAux[8];
 												char cadenaMax[15];
 												
 												
-												/* VERIFICAR */
+												
 												if(pruNroMax > 0){
 													strcpy(pruAux, "_@max");
 													strcat(pruAux,itoa(pruNroMax+1,cadenaMax,10));
 													enlistar(&polacaLista, pruAux, posicionPolaca);
 													posicionPolaca++;
-													apilarPru("", pruAux);																																
 													
 													
 												}
@@ -273,26 +262,19 @@ asignacion: ID_T OP_AS expresion SEP_LINEA {
 												bandRecienCerreMax = 0;
 												banderaMaxAnidado = 0;
 												finmax = -1;
-											//	for(int fortam = 0; fortam < 50; fortam++){
-											//		pruCantArgsMax[fortam] = -1;
-											//	}
+											
 
 
-												/*agregado*/													
-												
-												apilarPru("", pruAux);
+																									
 												
 												
-												apilarPru("*****APILO ASIGNACION ID", $1);
-												apilarPru("", ":");
 												if(pruNroMax==0){
 
                                                     pruNroMax = 0;
                                                     inicializarCantArg();
                                                     bandRecienCerreMax = 0;
                                                 }
-												/*apilarPru("", "-----EEEE");	*/
-												/* ============================= */
+												
 											}
 
 
@@ -322,14 +304,7 @@ asignacion: ID_T OP_AS expresion SEP_LINEA {
             											printf("ES ASIGNACION: CONST_T ID_T OP_AS EXPRESION \n"); 
             											
 														
-														/* ============================= */
-														/* ========= MARIANO =========== */
-														/* ============================= */
 														
-														apilarPru("*****APILO ASIGNACION CONST_T", $2);
-														apilarPru("", ":");	
-														
-														/* ============================= */
 													}
             ;
 
@@ -337,13 +312,7 @@ asignacion: ID_T OP_AS expresion SEP_LINEA {
 imprimir:   TOKEN_PUT {enlistar(&polacaLista, "PUT", posicionPolaca); posicionPolaca++; }  elemento  SEP_LINEA { 
 											printf("ES IMPRIMIR: TOKEN_PUT CONST_STRING \n");
 											
-											/* ============================= */
-											/* ========= MARIANO =========== */
-											/* ============================= */
-														
-											apilarPru("*****APILO PUT", "PUT");
 											
-											/* ============================= */
 														
 										  }
             ;
@@ -395,15 +364,7 @@ comparacion: expresion comparador termino {
 											apilarEntero(&rellenar, posicionPolaca);  posicionPolaca++;
 											printf("EXPRESION COMPARADOR TERMINO \n");
 											
-											/* ============================= */
-											/* ========= MARIANO =========== */
-											/* ============================= */
 											
-											apilarPru("*****APILO COMPARACION", "CMP");
-											apilarPru("*****APILO COMPARACION", simboloComparacion);
-											apilarPru("*****APILO COMPARACION", "  ");
-											
-											/* ============================= */
 										   }
 
 
@@ -439,14 +400,7 @@ expresion:  expresion OP_SUM termino {
 										posicionPolaca++; 
 										printf("ES EXPRESION: EXPRESION OP_SUM TERMINO \n");
 										
-										/* ============================= */
-										/* ========= MARIANO =========== */
-										/* ============================= */
-
-										/*bandRecienCerreMax = 0;*/
-										apilarPru("*******APILO SUMA:", "+");
-										
-										/* ============================= */
+									
 									}
 
       |expresion OP_MENOS termino {  
@@ -454,14 +408,7 @@ expresion:  expresion OP_SUM termino {
 										posicionPolaca++; 
 										printf("ES EXPRESION: EXPRESION OP_MENOS TERMINO \n");
 										
-										/* ============================= */
-										/* ========= MARIANO =========== */
-										/* ============================= */
-
-										/*bandRecienCerreMax = 0;*/
-										apilarPru("*******APILO RESTA:", "-");
 										
-										/* ============================= */
 										
 									}
 
@@ -475,14 +422,7 @@ termino:    termino OP_MUL elemento {
 										posicionPolaca++; 
 										printf("ES TERMINO: TERMINO OP_MUL ELEMENTO \n");
 										
-										/* ============================= */
-										/* ========= MARIANO =========== */
-										/* ============================= */
-										
-										/*bandRecienCerreMax = 0;*/
-										apilarPru("*******APILO MULTIPLICACION:", "*");
-										
-										/* ============================= */
+									
 									}
 
       |termino OP_DIVISION elemento {  
@@ -490,14 +430,7 @@ termino:    termino OP_MUL elemento {
 										posicionPolaca++; 
       									printf("ES TERMINO: TERMINO OP_DIVISION ELEMENTO \n");
 										
-										/* ============================= */
-										/* ========= MARIANO =========== */
-										/* ============================= */
-
-										/*bandRecienCerreMax = 0;		*/
-										apilarPru("*******APILO DIVISION:", "/");
 										
-										/* ============================= */
 									}
 
       |elemento {printf("ES TERMINO: ELEMENTO \n");  }
@@ -530,17 +463,10 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
       											}	
 
 
-												/* ============================= */
-												/* ========= MARIANO =========== */
-												/* ============================= */
+												
 												char pruAux[8];
 												
-												/*pruNroMax--;
-												
-												if (pruNroMax > 0){*/
-												
-												if (pruNroMax > 1){
-													/*apilarPru("", "-----AAAA");	*/
+											
 													
 													bandRecienCerreMax = 1;
 													
@@ -554,14 +480,6 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 																										
 													if(pruCantArgsMax[pruNroMax] > 0 && pruNroMax > 1) { /*solo cuando no es primer argumento */
 														
-														/*apilarPru("", "        +++++++++");																		
-														apilarPru("", itoa(pruCantArgsMax[1],cadenaMax,10));														
-														apilarPru("", itoa(bandRecienCerreMax,cadenaMax,10));													
-														apilarPru("", "        ********");																
-														apilarPru("", itoa(pruNroMax,cadenaMax,10));														
-														apilarPru("", itoa(pruCantArgsMax[pruNroMax],cadenaMax,10));														
-														apilarPru("", "        ********");
-														*/
 														
 														pruNroMax--;
 														
@@ -569,106 +487,93 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 															enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 								
 															enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-															apilarPru("", "_@aux");
-															apilarPru("", ":");
-																														
+																							
 															
 															strcpy(pruAux, "_@max");
 															strcat(pruAux,itoa(pruNroMax,cadenaMax,10));
 															enlistar(&polacaLista, pruAux, posicionPolaca); posicionPolaca++;
-															apilarPru("", pruAux);
-
+															
 															enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-															apilarPru("", "_@aux");
+															
 															
 															
 																						
 															enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;													
-															apilarPru("", "CMP");
+															
 															enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
-															apilarPru("", "BLE");
+														
 
 															enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
-															apilarPru("", "8888");
+															
 
 															enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-															apilarPru("", "_@aux");
+															
 
 															enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 															enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-															apilarPru("", max);
+															
 
 															
-															apilarPru("", ":");	
-
-															/*enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-															apilarPru("", max);*/
+															
 														}
-													}
+													
+
 
 												}else{													
-													/* HAY QUE DETECTAR SI LO QUE VINO FUE UN MAXIMO O NO */
-													/* SI ES MAXIMO(1, 2, MAXIMO(3,4)) NO HAY QUE HACERLO */
-													/* SI ES MAXIMO(1, MAXIMO(3,4), 5) SI */																								
+																																	
 													pruNroMax--;
 													if(bandRecienCerreMax == 0){
-														/*apilarPru("", "-----BBBB");	*/
+													
 													
 
 														enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 														enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;												
-														apilarPru("", "_@aux");
 														
-														
-														apilarPru("", ":");
-
 													
 														strcpy(pruAux, "_@max");
 														strcat(pruAux,itoa(pruNroMax+1,cadenaMax,10));
-														/*strcat(pruAux,itoa(pruNroMax,cadenaMax,10));*/
+													
 														enlistar(&polacaLista, pruAux, posicionPolaca); posicionPolaca++;
-														apilarPru("", pruAux);
+													
 
 														enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-														apilarPru("", "_@aux");
+														
 																						
 																			
 														enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;								
-														apilarPru("", "CMP");
+														
 
 														enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
-														apilarPru("", "BLE");
+														
 
 
 														enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
-														apilarPru("", "8888");
+														
 
 														enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-														apilarPru("", "_@aux");
+														
 
 														enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 
 														enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-														apilarPru("", max);
+														
 
 														
-														apilarPru("", ":");
-
-														/*enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-														apilarPru("", max);*/
 														
-														/*apilarPru("", "-----BBBB");	*/
+
+														
 														
 													}
 												}
 												
 												
-												/* ============================= */
+												
 												
       										}
+      						
 
 
       |ID_T { 	
@@ -688,15 +593,10 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 				printf("ES ELEMENTO: ID_T  %s\n",$1); 
       			
 						
-
-				/* ============================= */
-				/* ========= MARIANO =========== */
-				/* ============================= */							
+					
 				bandRecienCerreMax = 0;
 				
-				apilarPru("*******APILO ID:", $1);
-				
-				/* ============================= */
+			
 			}
 			
 
@@ -707,16 +607,12 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
                     enlistar(&polacaLista, auxString, posicionPolaca); 
                     posicionPolaca++; 
 					printf("ES ELEMENTO: CONST INT \n");
-						
-					/* ============================= */
-					/* ========= MARIANO =========== */
-					/* ============================= */	
+				
 					
 					bandRecienCerreMax = 0;
 					
 					apilarPru("*******APILO CONST_INT:", $1);																				
-					
-					/* ============================= */												
+													
 				}
 
 
@@ -727,15 +623,13 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
                         posicionPolaca++;
                         printf("ES ELEMENTO: CONST FLOAT \n");
 	  
-						/* ============================= */
-						/* ========= MARIANO =========== */
-						/* ============================= */												
+															
 						
 						bandRecienCerreMax = 0;
 						
 						apilarPru("*******APILO CONST_FLOAT:", $1);																				
 						
-						/* ============================= */												
+																
 					}
 
 
@@ -760,16 +654,13 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
                         } 
                         enlistar(&polacaLista, auxString, posicionPolaca); posicionPolaca++;   		
       					printf("ES ELEMENTO: CONST STRING \n");
-						
-						/* ============================= */
-						/* ========= MARIANO =========== */
-						/* ============================= */												
+																
 						
 						bandRecienCerreMax = 0;						
 						
-						apilarPru("*******APILO CONST_STRING:", $1);																				
+																							
 						
-						/* ============================= */		
+							
 					}
 
       ;
@@ -777,18 +668,11 @@ elemento:  PARENT_A expresion PARENT_C {printf("ES ELEMENTO: PARENT_A EXPRESION 
 argumentos: argumentos 	SEPARADOR_T {	
 															if(pruNroMax == 1 && pruCantArgsMax[pruNroMax] > 1 && bandRecienCerreMax == 0){
 																
-																/*apilarPru("", "-----CCCC");*/
+																
 																																
 																char max[8];
 																char cadenaMax[5];
 																
-																/*
-																char pruAux[8];
-																strcpy(pruAux, "_@max");
-																strcat(pruAux,itoa(pruNroMax,cadenaMax,10));
-																enlistar(&polacaLista, pruAux, posicionPolaca); posicionPolaca++;
-																apilarPru("", pruAux);
-																*/
 																
 																strcpy(max, "_@max");
 																strcat(max,itoa(pilaTam,cadenaMax,10));
@@ -796,41 +680,33 @@ argumentos: argumentos 	SEPARADOR_T {
 																enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 																enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;														
-																apilarPru("", "_@aux");	
-
-																
-																apilarPru("", ":");
+																														
 																
 																enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-																apilarPru("", max);
+																
 
 																enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-																apilarPru("", "_@aux");
-
 																
 
 																enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
-																apilarPru("", "CMP");
+															
 
 																enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
-																apilarPru("", "BLE");
+															
 
 																enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
-																apilarPru("", "9999"); //POSICIONPOLACA+5
+																
 
 																enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-																apilarPru("", "_@aux");
+																
 
 																enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 
 																enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-																apilarPru("", max);
-
 																
-																apilarPru("", ":");
 																
-																/*apilarPru("", "-----CCCC");	*/
+																
 																
 																}
 															
@@ -844,62 +720,58 @@ argumentos: argumentos 	SEPARADOR_T {
 																		
 																		
 																		
-																		//pruCantArgsMax[pruNroMax]++; 
+																		
 																		
 																	
 																			
 																		printf("ES ARGUMENTO: ARGUMENTOS SEPARADOR_T EXPRESION \n");																		
 																		
-																		/* ============================= */
-																		/* ========= MARIANO =========== */
-																		/* ============================= */
+																		
 
 																		if (pruNroMax > 1){
-																			/*apilarPru("", "-----DDDD");	*/
+																			
 
 																			enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 
 																			enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-																			apilarPru("", "_@aux");	
+																			
 
 																			
-																			apilarPru("", ":");
+																			
 																			
 																			enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-																			apilarPru("", max);
+																		
 
 																			
 																			enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-																			apilarPru("", "_@aux");
+																		
 
 
 
 																			enlistar(&polacaLista, "CMP", posicionPolaca); posicionPolaca++;
-																			apilarPru("", "CMP");
+																	
 
 																			enlistar(&polacaLista, "BLE", posicionPolaca); posicionPolaca++;
-																			apilarPru("", "BLE");
+																
 
 																			enlistar(&polacaLista, itoa(posicionPolaca+5, cadenaMax, 10), posicionPolaca); posicionPolaca++;
-																			apilarPru("", "9999"); /*POSICIONPOLACA+5*/
+																	
 
 																			enlistar(&polacaLista, "_@aux", posicionPolaca); posicionPolaca++;
-																			apilarPru("", "_@aux");
+																		
 
 
 																			enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;
 
 																			enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-																			apilarPru("", max);
+																		
 
 																			
-																			apilarPru("", ":");
 																		
-																			/*apilarPru("", "-----DDDD");	*/
 																		}
 																		
-																		/* ============================= */												
+																													
 																	}
 
 
@@ -914,9 +786,7 @@ argumentos: argumentos 	SEPARADOR_T {
 							printf("ES ARGUMENTO: EXPRESION \n"); 
 							
 							
-							/* ============================= */
-							/* ========= MARIANO =========== */
-							/* ============================= */
+							
 							
 							
 
@@ -929,12 +799,9 @@ argumentos: argumentos 	SEPARADOR_T {
 							enlistar(&polacaLista, ":", posicionPolaca); posicionPolaca++;	
 
 							enlistar(&polacaLista, max, posicionPolaca); posicionPolaca++;
-							apilarPru("*******APILO EXPRESION:", max);		
+							
 
-																						
-							apilarPru("", ":");	
-							/*apilarPru("", "-----FFFF");	*/
-							/* ============================= */												
+																
 						}
         ;
 %%
@@ -960,7 +827,7 @@ int main(int argc,char *argv[])
     crear_cola(&cola);
 	crear_pila(&condicionesOR);
 	
-	crear_pila(&pruMax);
+	
 	inicializarCantArg();
 	
 	
@@ -968,13 +835,14 @@ int main(int argc,char *argv[])
   }
   fclose(yyin);
   
-  while(!pila_vacia(&pruMax)){
-	desapilar(&pruMax,pruChr);
-	//printf("%s\n", pruChr);	
-	}
+ 
 
   return 0;
 }
+
+
+
+
 
 void inicializarCantArg(){
 	int x;

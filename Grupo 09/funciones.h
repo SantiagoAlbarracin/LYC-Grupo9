@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Pila.h"
-#include "Cola.h"
-#include "Lista.h"
+#include "utilitarias\Pila.h"
+#include "utilitarias\Cola.h"
+#include "utilitarias\Lista.h"
 
 #define CON_VALOR 1
 #define SIN_VALOR 0

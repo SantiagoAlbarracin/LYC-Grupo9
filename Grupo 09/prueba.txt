@@ -5,7 +5,6 @@ PUT "Ingrese un entero a actual: ";
 GET actual;
 PUT "Actual tiene: ";
 PUT actual;
-actual: 2*5*5;
 suma:10 ;
 contador: maximo( 9, 3, 4);
 PUT "Contador tiene: ";
@@ -22,9 +21,6 @@ PUT "Suma tiene: ";
 PUT suma;
 if(suma < 10 AND suma <= 8 ){
 	PUT "hola";
-}
-if(suma == 8 OR suma <> 4){
-	PUT "chau";
 }
 suma:8;
 if(suma  == 8 AND suma <> 4){

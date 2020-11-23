@@ -23,7 +23,6 @@ _actuales2y_0	db	"actual es > 2 y != 0" , '$' , 22 dup  (?)
 _actualtiene	db	"actual tiene: " , '$' , 16 dup  (?)
 _ahoracontadortiene	db	"ahora contador tiene:" , '$' , 23 dup  (?)
 _aux_esddfloat	dd	?	;esddfloat
-_chau	db	"chau" , '$' , 6 dup  (?)
 _contador_esddfloat	dd	?	;esddfloat
 _contadortiene	db	"contador tiene: " , '$' , 18 dup  (?)
 _entrealwhile	db	"entre al while" , '$' , 16 dup  (?)
@@ -74,16 +73,6 @@ displayString _actualtiene
 newline 1
 DisplayFloat _actual_esddfloat , 2
 newline 1
-FLD _2_esddfloat
-FLD _5_esddfloat
-FMUL 
-FSTP _varaux
-FLD _varaux
-FLD _5_esddfloat
-FMUL 
-FSTP _varaux
-FLD _varaux
-FSTP _actual_esddfloat
 FLD _10_esddfloat
 FSTP _suma_esddfloat
 FLD _9_esddfloat
@@ -96,22 +85,10 @@ FXCH
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq38
+JNA  _Etiq31
 FLD _@aux
 FSTP _@max1
-_Etiq38:
-FLD _4_esddfloat
-FSTP _@aux
-FLD _@aux
-FLD _@max1
-FXCH
-FCOM
-FSTSW AX
-SAHF
-JNA  _Etiq49
-FLD _@aux
-FSTP _@max1
-_Etiq49:
+_Etiq31:
 FLD _@max1
 FSTP _contador_esddfloat
 displayString _contadortiene 
@@ -124,19 +101,19 @@ displayString _ahoracontadortiene
 newline 1
 DisplayFloat _contador_esddfloat , 2
 newline 1
-_Etiq64:
+_Etiq48:
 FLD _3_esddfloat
 FLD _suma_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq89
+JNA  _Etiq73
 FLD _contador_esddfloat
 FLD _4_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JB  _Etiq89
+JB  _Etiq73
 displayString _entrealwhile 
 newline 1
 FLD _suma_esddfloat
@@ -151,8 +128,8 @@ FADD
 FSTP _varaux
 FLD _varaux
 FSTP _contador_esddfloat
-JMP _Etiq64
-_Etiq89:
+JMP _Etiq48
+_Etiq73:
 displayString _sumatiene 
 newline 1
 DisplayFloat _suma_esddfloat , 2
@@ -162,33 +139,17 @@ FLD _suma_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JAE  _Etiq106
+JAE  _Etiq90
 FLD _suma_esddfloat
 FLD _8_esddfloat
 FXCH
 FCOM
 FSTSW AX
 SAHF
-JA  _Etiq106
+JA  _Etiq90
 displayString _hola 
 newline 1
-_Etiq106:
-FLD _8_esddfloat
-FLD _suma_esddfloat
-FCOM
-FSTSW AX
-SAHF
-JE  _Etiq117
-FLD _suma_esddfloat
-FLD _4_esddfloat
-FCOM
-FSTSW AX
-SAHF
-JE  _Etiq119
-_Etiq117:
-displayString _chau 
-newline 1
-_Etiq119:
+_Etiq90:
 FLD _8_esddfloat
 FSTP _suma_esddfloat
 FLD _8_esddfloat
@@ -196,17 +157,17 @@ FLD _suma_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JNE  _Etiq135
+JNE  _Etiq106
 FLD _suma_esddfloat
 FLD _4_esddfloat
 FXCH
 FCOM
 FSTSW AX
 SAHF
-JE  _Etiq135
+JE  _Etiq106
 displayString _sumaesiguala8ya4 
 newline 1
-_Etiq135:
+_Etiq106:
 FLD _2_esddfloat
 FSTP _suma_esddfloat
 FLD _4_esddfloat
@@ -214,10 +175,10 @@ FLD _suma_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JE  _Etiq145
+JE  _Etiq116
 displayString _noesiguala4 
 newline 1
-_Etiq145:
+_Etiq116:
 FLD _9_esddfloat
 FSTP _@max3
 FLD _8_esddfloat
@@ -228,10 +189,10 @@ FXCH
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq159
+JNA  _Etiq130
 FLD _@aux
 FSTP _@max3
-_Etiq159:
+_Etiq130:
 FLD _7_esddfloat
 FSTP _@aux
 FLD _@aux
@@ -240,10 +201,10 @@ FXCH
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq170
+JNA  _Etiq141
 FLD _@aux
 FSTP _@max3
-_Etiq170:
+_Etiq141:
 FLD _@max3
 FSTP _@max2
 FLD _2_esddfloat
@@ -254,10 +215,10 @@ FXCH
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq184
+JNA  _Etiq155
 FLD _@aux
 FSTP _@max2
-_Etiq184:
+_Etiq155:
 FLD _4_esddfloat
 FSTP _@aux
 FLD _@aux
@@ -266,10 +227,10 @@ FXCH
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq195
+JNA  _Etiq166
 FLD _@aux
 FSTP _@max2
-_Etiq195:
+_Etiq166:
 FLD _@max2
 FSTP _@max1
 FLD _3_esddfloat
@@ -280,22 +241,10 @@ FXCH
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq209
+JNA  _Etiq180
 FLD _@aux
 FSTP _@max1
-_Etiq209:
-FLD _4_esddfloat
-FSTP _@aux
-FLD _@aux
-FLD _@max1
-FXCH
-FCOM
-FSTSW AX
-SAHF
-JNA  _Etiq220
-FLD _@aux
-FSTP _@max1
-_Etiq220:
+_Etiq180:
 FLD _@max1
 FSTP _suma_esddfloat
 displayString _sumatiene 
@@ -307,19 +256,19 @@ FLD _actual_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JNA  _Etiq243
+JNA  _Etiq205
 FLD _actual_esddfloat
 FLD _0_esddfloat
 FXCH
 FCOM
 FSTSW AX
 SAHF
-JE  _Etiq243
+JE  _Etiq205
 displayString _actuales2y_0 
 newline 1
 FLD _2_esddfloat
 FSTP _suma_esddfloat
-_Etiq243:
+_Etiq205:
 FLD _5_esddfloat
 FSTP _promedio_esddfloat
 FLD _nombre_esddfloat
@@ -327,10 +276,10 @@ FLD _actual_esddfloat
 FCOM
 FSTSW AX
 SAHF
-JAE  _Etiq253
+JAE  _Etiq215
 displayString _noesmayorque2 
 newline 1
-_Etiq253:
+_Etiq215:
 MOV EAX, 4c00h  ; termina la ejecucion
 INT 21h
 END start;
